@@ -21,10 +21,14 @@ setup(
     entry_points={
         'console_scripts': [
             'joint_space = piper_control.joint_space:main',
+            'start_position = piper_control.start_position:main',
             'gripper_basic = piper_control.gripper_control_basic:main',
             'gen = piper_control.motion_gen_curobo:main',
+            'gen_gripper = piper_control.motion_gen_curobo_gripper:main',
             'exec = piper_control.execute_motion:main',
-            'exec_single = piper_control.execute_single_motion:main'
+            'exec_single = piper_control.execute_single_motion:main',
+            'cali = piper_control.cali_positions:main',
+            'demo = piper_control.demo:main'
         ],
     },
 )

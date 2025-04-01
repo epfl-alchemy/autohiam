@@ -24,7 +24,7 @@ class RobotTransformNode(Node):
         self.subscription_tf = self.create_subscription(TFMessage, '/tf', self.listener_callback_tf, 10)
         self.subscription_tf_static = self.create_subscription(TFMessage,'/tf_static', self.listener_callback_tf_static, qos_profile)
         self.transformations = {}
-        self.pose_count = 0  #
+        self.pose_count = 0 
         self.subscription_keypress = self.create_subscription(String, 'keypress_topic', self.keypress_callback, 10)
 
 
@@ -52,25 +52,43 @@ class RobotTransformNode(Node):
         self.get_logger().info("Subcribed to /tf_static successfully")
 
 
-    def get_full_transformation_matrix(self, base_link, ee_link):
-        T = np.eye(4)
-        current_link = base_link
-        while current_link != ee_link:
-            next_link = None
-            for (frame_id, child_frame_id), transform in self.transformations.items():
-                if frame_id == current_link:
-                    next_link = child_frame_id
-                    translation = [transform.transform.translation.x, transform.transform.translation.y, transform.transform.translation.z]
-                    rotation = [transform.transform.rotation.x, transform.transform.rotation.y, transform.transform.rotation.z, transform.transform.rotation.w]
-                    T_local = np.eye(4)
-                    T_local[:3, :3] = self.quaternion_to_rotation_matrix(*rotation)
-                    T_local[:3, 3] = translation
-                    T = np.dot(T, T_local)
-                    break
+    # def get_full_transformation_matrix(self, base_link, ee_link):
+    #     T = np.eye(4)
+    #     current_link = base_link
+    #     while current_link != ee_link:
+    #         next_link = None
+    #         for (frame_id, child_frame_id), transform in self.transformations.items():
+    #             if frame_id == current_link:
+    #                 next_link = child_frame_id
+    #                 translation = [transform.transform.translation.x, transform.transform.translation.y, transform.transform.translation.z]
+    #                 rotation = [transform.transform.rotation.x, transform.transform.rotation.y, transform.transform.rotation.z, transform.transform.rotation.w]
+    #                 T_local = np.eye(4)
+    #                 T_local[:3, :3] = self.quaternion_to_rotation_matrix(*rotation)
+    #                 T_local[:3, 3] = translation
+    #                 T = np.dot(T, T_local)
+    #                 break
 
-            if next_link is None:
-                raise ValueError(f"Could not find link from {current_link} to {ee_link}. Make sure the links are correctly specified.")
-            current_link = next_link
+    #         if next_link is None:
+    #             raise ValueError(f"Could not find link from {current_link} to {ee_link}. Make sure the links are correctly specified.")
+    #         current_link = next_link
+
+    #     return T
+    def get_full_transformation_matrix(self):
+        T = np.eye(4)  # Start with the identity matrix
+        link_order = [
+            ('base_link', 'link_1'), ('link1', 'link2'), 
+            ('link2', 'link3'), ('link3', 'link4'), 
+            ('link4', 'link5'), ('link5', 'link6')
+        ]
+        for (frame_id, child_frame_id) in link_order:
+            if (frame_id, child_frame_id) in self.transformations:
+                trans = self.transformations[(frame_id, child_frame_id)].transform
+                translation = [trans.translation.x, trans.translation.y, trans.translation.z]
+                rotation = [trans.rotation.x, trans.rotation.y, trans.rotation.z, trans.rotation.w]
+                T_local = np.eye(4)
+                T_local[:3, :3] = self.quaternion_to_rotation_matrix(*rotation)
+                T_local[:3, 3] = translation
+                T = np.dot(T, T_local)
 
         return T
 
@@ -101,12 +119,13 @@ class RobotTransformNode(Node):
         print(rotation_matrix)
         print("Translation Vector:")
         print(translation_vector)
-        self.get_logger().info(f'Transformation for Pose {self.pose_count} appended to robot_data_simulation.yaml')
+        self.get_logger().info(f'Transformation for Pose {self.pose_count} appended to {self.robot_data_file_name}')
 
     def keypress_callback(self, msg):
         key = msg.data
         if key == 'q':
-            T = self.get_full_transformation_matrix(self.base_link, self.ee_link)
+            # T = self.get_full_transformation_matrix(self.base_link, self.ee_link)
+            T = self.get_full_transformation_matrix()
             R_gripper2base = T[:3, :3]
             t_gripper2base = T[:3, 3]
             self.save_transformation_to_yaml(R_gripper2base, t_gripper2base)

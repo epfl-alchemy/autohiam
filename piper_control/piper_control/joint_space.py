@@ -81,7 +81,7 @@ def main(args: list = None) -> None:
         [math.radians(angle) for angle in pose] for pose in poses_degrees
     ]
 
-    home_pose = [0.0, 0.0, -0.71, 0.0, 0.7, 0.0]
+    home_pose = [0.0, 0.345, -0.415, 0.0, 0.488, 0.0]
 
 
     # Execute each pose with a 5 second pause in between

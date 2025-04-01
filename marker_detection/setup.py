@@ -20,7 +20,9 @@ setup(
     tests_require=['pytest'],
     entry_points={
         'console_scripts': [
-            'estimate_marker_pose = marker_detection.estimate_marker_pose:main'
+            'estimate_marker_pose = marker_detection.estimate_marker_pose:main',
+            'gripper_estimate_marker_pose = marker_detection.estimate_marker_pose_gripper:main',
+            'sim_estimtae_marker_pose = marker_detection.estimate_marker_gripper_sim:main'
         ],
     },
 )

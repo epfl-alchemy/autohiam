@@ -70,7 +70,7 @@ class HandEyeCalibrationNode(Node):
         # Save results to YAML
         # Output: camera relative to gripper frame (eye to hand)
         self.save_yaml(R, t)
-        self.save_yaml_profile(R_qua, t)
+        # self.save_yaml_profile(R_qua, t)
 
     def rotation_matrix_to_quaternion(self, matrix):
         """Convert a 3x3 rotation matrix into a quaternion."""

@@ -142,7 +142,7 @@ class cuRoboGenNode(Node):
         quat_values = (msg.orientation.x, msg.orientation.y, msg.orientation.z, msg.orientation.w) 
         point = np.array([msg.position.x, msg.position.y, msg.position.z])
 
-        distance = 0.0
+        distance = 0.1
         new_coordinates = calculate_new_point(quat_values, point, distance)
         x_new = new_coordinates[0]
         y_new = new_coordinates[1]
@@ -201,7 +201,7 @@ class cuRoboGenNode(Node):
         motion_gen_result = self.motion_gen.plan_single(
             start_state, 
             goal_pose,
-            MotionGenPlanConfig(max_attempts=15, enable_graph_attempt=5, time_dilation_factor=time_dilation_factor),
+            MotionGenPlanConfig(max_attempts=50, enable_graph_attempt=5, time_dilation_factor=time_dilation_factor),
         )
         
         if motion_gen_result.success.item():

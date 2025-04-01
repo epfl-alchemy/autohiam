@@ -120,6 +120,7 @@ class ArucoNode(Node):
         if marker_ids is None:
             self.get_logger().info("No marker has been detected.")
         elif marker_ids is not None:
+            # self.get_logger().info("Marker detected.")
             cv2.aruco.drawDetectedMarkers(current_frame, corners, marker_ids)
             rvecs, tvecs, _ = cv2.aruco.estimatePoseSingleMarkers(corners, self.aruco_marker_side_length, self.mtx, self.dst)
             
