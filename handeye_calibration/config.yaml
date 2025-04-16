@@ -1,5 +1,5 @@
 aruco_dictionary_name: "DICT_ARUCO_ORIGINAL"
-aruco_marker_side_length: 0.0770 #0.150
+aruco_marker_side_length: 0.144 #0.144
 camera_calibration_parameters_filename: "src/handeye_calibration/camera_info.yaml"
 image_topic: "/camera/camera/color/image_raw" #/camera/image_raw
 aruco_marker_name: "aruco_marker"
@@ -13,24 +13,3 @@ handeye_result_profile_file_name: "src/handeye_calibration/handeye_result_profil
 base_link: "base_link"
 ee_link: "link6"
 world_frame: "world"
-
-# link_order_publish_marker:
-#   - ['world', 'base_link']
-#   - ['base_link', 'link1']
-#   - ['link1', 'link2']
-#   - ['link2', 'link3']
-#   - ['link3', 'link4']
-#   - ['link4', 'link5']
-#   - ['link5', 'link6']
-#   - ['link6', 'gripper_base']
-#   - ['gripper_base', 'calculated_camera_link_optical']
-
-# link_order_publish_eye2hand:
-#   - ['world', 'base_link']
-#   - ['base_link', 'link1']
-#   - ['link1', 'link2']
-#   - ['link2', 'link3']
-#   - ['link3', 'link4']
-#   - ['link4', 'link5']
-#   - ['link5', 'link6']
-#   - ['link6', 'gripper_base']

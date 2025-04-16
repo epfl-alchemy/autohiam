@@ -97,11 +97,14 @@ def main(args: list = None) -> None:
     #     [0.0143, 0.1256, -0.0890, 0.0194, -0.2196, -0.0194],
     #     [-0.2250, 0.1256, -0.0890, 0.0194, -0.2196, -0.0194]
     # ]
+    poses_degrees = [
+        [66.695, 166.984, 42.527, 88.216, -94.831, -60.806]
+    ]
 
     # Convert each pose from degrees to radians
-    # poses = [
-    #     [math.radians(angle) for angle in pose] for pose in poses_degrees
-    # ]
+    poses = [
+        [math.radians(angle) for angle in pose] for pose in poses_degrees
+    ]
 
 
     # Execute each pose with a 5 second pause in between

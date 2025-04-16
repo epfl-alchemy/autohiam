@@ -22,6 +22,7 @@ setup(
         'console_scripts': [
             'estimate_marker_pose = marker_detection.estimate_marker_pose:main',
             'gripper_estimate_marker_pose = marker_detection.estimate_marker_pose_gripper:main',
+            'gripper_pnp = marker_detection.estimate_marker_pose_gripper_pnp:main',
             'sim_estimtae_marker_pose = marker_detection.estimate_marker_gripper_sim:main'
         ],
     },

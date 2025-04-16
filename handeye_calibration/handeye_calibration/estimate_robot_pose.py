@@ -76,7 +76,7 @@ class RobotTransformNode(Node):
     def get_full_transformation_matrix(self):
         T = np.eye(4)  # Start with the identity matrix
         link_order = [
-            ('base_link', 'link_1'), ('link1', 'link2'), 
+            ('base_link', 'link1'), ('link1', 'link2'), 
             ('link2', 'link3'), ('link3', 'link4'), 
             ('link4', 'link5'), ('link5', 'link6')
         ]

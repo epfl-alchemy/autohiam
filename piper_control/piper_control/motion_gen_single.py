@@ -111,6 +111,7 @@ class cuRoboGenNode(Node):
         ).get_collision_check_world()
         self.motion_gen.update_world(self.world_model)
         
+    # def curobo_motion(self, target_pose, js):
     def curobo_motion(self, js):
         if self.js_buffer is None:
             self.get_logger().info("Waiting for current joint state to be available.")
@@ -135,20 +136,25 @@ class cuRoboGenNode(Node):
 
         start_state = self.motion_gen.get_active_js(state)
         
+        # goal_pose = cuPose(
+        #     position = torch.tensor([[0.061297, -0.069672, 0.339075]], dtype=torch.float32, device='cuda:0'),
+        #     quaternion = torch.tensor([[0.807163, -0.001325, 0.590326, 0.000750]], dtype=torch.float32, device='cuda:0') #wxyz
+        # )
         goal_pose = cuPose(
-            position = torch.tensor([[0.0, 0.0, 0.0]], dtype=torch.float32, device='cuda:0'),
-            quaternion = torch.tensor([[1.0, 0.0, 0.0, 0.0]], dtype=torch.float32, device='cuda:0') #wxyz
-        )
+            position = torch.tensor([[0.061297, -0.069672, 0.339075]], dtype=torch.float32, device='cuda:0'),
+  quaternion = torch.tensor([[0.807163, -0.001325, 0.590326, 0.000750]], dtype=torch.float32, device='cuda:0')
+       )
+
 
         goal_state = cuJointState.from_position(
             self.tensor_args.to_device(torch.tensor([[0.1579, 0.8164, -0.89, 0.0194, 0.5611, -0.0194]], dtype=torch.float32, device='cuda:0')),
             joint_names=[
-                "joint1",
                 "joint2",
                 "joint3",
-                "joint4",
                 "joint5",
                 "joint6",
+                "joint1",
+                "joint4",
             ],
         )
 
@@ -200,6 +206,21 @@ class cuRoboGenNode(Node):
             self.get_logger().error(
                 f'Motion planning failed wih status: {motion_gen_result.status}'
             ) 
+        
+    # def load_target_poses(self, filepath: str):
+    #     with open(filepath, 'r') as f:
+    #         data = yaml.safe_load(f)
+    #     poses = []
+    #     for pose_entry in data['poses']:
+    #         pose_dict = list(pose_entry.values())[0]  # Get the dictionary under 'pose_1', etc.
+    #         position = pose_dict['position']
+    #         orientation = pose_dict['orientation']
+    #         poses.append({
+    #             'position': [position['x'], position['y'], position['z']],
+    #             'quaternion': [orientation['w'], orientation['x'], orientation['y'], orientation['z']]  # wxyz for cuRobo
+    #         })
+    #     return poses
+
 
 
 def main(args: list = None) -> None:
@@ -213,7 +234,12 @@ def main(args: list = None) -> None:
             curobo_gen_node.get_logger().info("Waiting for joint states...")
 
         # Generate trajectory once
-        curobo_gen_node.curobo_motion(js=True)
+        curobo_gen_node.curobo_motion(js=False)
+        # target_poses = curobo_gen_node.load_target_poses("/home/szhuang/autohiam_ws/src/piper_control/handeye_calibration_poses.yaml")
+        # for i, pose in enumerate(target_poses):
+        #     curobo_gen_node.get_logger().info(f"Planning motion to pose {i+1}")
+        #     curobo_gen_node.curobo_motion(target_pose=pose, js=False)
+
 
         # Ensure node is properly destroyed before shutdown
         curobo_gen_node.get_logger().info("Trajectory generated, shutting down.")

@@ -141,13 +141,13 @@ class cuRoboGenNode(Node):
         quat_values = (msg.orientation.x, msg.orientation.y, msg.orientation.z, msg.orientation.w) 
         point = np.array([msg.position.x, msg.position.y, msg.position.z])
 
-        distance = 0.150
+        distance = 0.110
         new_coordinates = calculate_new_point(quat_values, point, distance)
         x_new = new_coordinates[0]
         y_new = new_coordinates[1]
         z_new = new_coordinates[2]
              
-        position_tensor = torch.tensor([[round(x_new, 2), round(y_new, 2), round(z_new, 2)+0.020]], dtype=torch.float32, device='cuda:0')
+        position_tensor = torch.tensor([[round(x_new, 2), round(y_new, 2), round(z_new, 2)]], dtype=torch.float32, device='cuda:0')
         quaternion_tensor = torch.tensor([[result_quat[3], result_quat[0], result_quat[1], result_quat[2]]], dtype=torch.float32, device='cuda:0') #wxyz
         
         new_target_pose = cuPose(

@@ -10,9 +10,7 @@ from geometry_msgs.msg import TransformStamped
 from tf2_msgs.msg import TFMessage
 from rclpy.qos import QoSProfile, DurabilityPolicy
 from scipy.spatial.transform import Rotation as R
-# import tf_transformations
-# from transforms3d.affines import quat_from_matrix
-
+import tf_transformations
 
 import numpy as np
 import yaml
@@ -25,13 +23,14 @@ class TransformPublisher(Node):
     def __init__(self):
         super().__init__('transform_publisher')
 
-        with open('src/handeye_calibration/config.yaml', 'r') as file:
+        with open('src/handeye_sim/config.yaml', 'r') as file:
             config = yaml.safe_load(file)
         self.handeye_result_file_name = config["handeye_result_file_name"]
         self.base_link = config["base_link"]
         self.ee_link = config["ee_link"]
         self.world_frame = config["world_frame"]
         self.calculated_camera_optical_frame_name = config["calculated_camera_optical_frame_name"]
+        self.link_order_publish_eye2hand = config["link_order_publish_eye2hand"]
 
         self.tf_broadcaster = tf2_ros.TransformBroadcaster(self)
 
@@ -49,14 +48,10 @@ class TransformPublisher(Node):
 
         self.translation = np.array(hand_eye_data['translation']).reshape((3, 1))
         self.rotation = np.array(hand_eye_data['rotation']).reshape((3, 3))
-
-        # self.handeye_quaternion = tf_transformations.quaternion_from_matrix(T) #xyzw
-        r = R.from_matrix(self.rotation)
-        self.handeye_quaternion = r.as_quat() #xyzw
+        self.handeye_quaternion = tf_transformations.quaternion_from_matrix(T)
 
         print(f'rotation: {self.rotation}')
         print(f'translation: {self.translation}')
-        print(f'handeye_quaternion: {self.handeye_quaternion}')
 
         timer_period = 0.1  # seconds
         self.timer = self.create_timer(timer_period, self.publish_handeye_transform)
@@ -85,14 +80,8 @@ class TransformPublisher(Node):
 
 
     def get_full_transformation_matrix(self):
-        T = np.eye(4)
-        link_order = [
-            ('world','base_link'),
-            ('base_link', 'link1'), ('link1', 'link2'), 
-            ('link2', 'link3'), ('link3', 'link4'), 
-            ('link4', 'link5'), ('link5', 'link6')
-        ]
-        for (frame_id, child_frame_id) in link_order:
+        T = np.eye(4)  # Start with the identity matrix
+        for (frame_id, child_frame_id) in self.link_order_publish_eye2hand:
             if (frame_id, child_frame_id) in self.transformations:
                 trans = self.transformations[(frame_id, child_frame_id)].transform
                 translation = [trans.translation.x, trans.translation.y, trans.translation.z]
@@ -102,6 +91,8 @@ class TransformPublisher(Node):
                 T_local[:3, 3] = translation
                 T = np.dot(T, T_local)
 
+        T_inv = np.linalg.inv(T)
+        # T is ee points to link_0
         return T
 
 
@@ -119,12 +110,7 @@ class TransformPublisher(Node):
         transformation_matrix = np.eye(4)
         transformation_matrix[:3, :3] = rotation_matrix
         transformation_matrix[:3, 3] = translation_vector
-
-        # quaternion = tf_transformations.quaternion_from_matrix(transformation_matrix)
-        r = R.from_matrix(rotation_matrix)
-        quaternion = r.as_quat()  # [x, y, z, w] format
-        # quaternion = quat_from_matrix.quaternion_from_matrix(transformation_matrix)
-        # quaternion = mat2quat(transformation_matrix[:3, :3])
+        quaternion = tf_transformations.quaternion_from_matrix(transformation_matrix)
 
         t.transform.rotation.x = quaternion[0]
         t.transform.rotation.y = quaternion[1]
@@ -146,15 +132,13 @@ class TransformPublisher(Node):
         transform_msg.transform.rotation.z = self.handeye_quaternion[2]
         transform_msg.transform.rotation.w = self.handeye_quaternion[3]
 
-        # Send the transform from camera_sim to ee
         self.tf_broadcaster.sendTransform(transform_msg)
 
-        # # Send the transform from ee to world
-        # Tc = self.get_full_transformation_matrix()
-        # rc = Tc[:3, :3]
-        # tc = Tc[:3, 3]
-        # self.publish_transform(tc, rc, self.world_frame, self.ee_link)
-        # self.publish_transform(tc, rc, self.world_frame, self.calculated_camera_optical_frame_name)
+        # Send the transform from camera_sim to world
+        Tc = self.get_full_transformation_matrix()
+        rc = Tc[:3, :3]
+        tc = Tc[:3, 3]
+        self.publish_transform(tc, rc, self.world_frame, self.ee_link)
 
 
 def main(args=None):

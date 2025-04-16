@@ -3,8 +3,8 @@
 <package format="3">
   <name>piper_control</name>
   <version>0.0.0</version>
-  <description>TODO: Package description</description>
-  <maintainer email="szhuang@todo.todo">szhuang</maintainer>
+  <description>Python package to control PiPer to perform AUTOHIAM</description>
+  <maintainer email="shengyang.zhuang@epfl.ch">szhuang</maintainer>
   <license>Apache-2.0</license>
 
   <test_depend>ament_copyright</test_depend>

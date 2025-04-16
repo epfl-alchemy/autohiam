@@ -1,0 +1,35 @@
+goal_pose_1:
+  position = torch.tensor([[0.061297, 0.000328, 0.339075]], dtype=torch.float32, device='cuda:0'),
+  quaternion = torch.tensor([[0.692391, -0.001174, 0.721520, 0.000969]], dtype=torch.float32, device='cuda:0')
+
+goal_pose_2:
+  position = torch.tensor([[0.111297, 0.050328, 0.389075]], dtype=torch.float32, device='cuda:0'),
+  quaternion = torch.tensor([[0.587392, 0.100866, 0.798725, 0.082679]], dtype=torch.float32, device='cuda:0')
+
+goal_pose_3:
+  position = torch.tensor([[0.011297, 0.050328, 0.389075]], dtype=torch.float32, device='cuda:0'),
+  quaternion = torch.tensor([[0.587055, -0.102924, 0.798935, -0.080471]], dtype=torch.float32, device='cuda:0')
+
+goal_pose_4:
+  position = torch.tensor([[0.111297, -0.049672, 0.389075]], dtype=torch.float32, device='cuda:0'),
+  quaternion = torch.tensor([[0.774102, 0.076030, 0.619480, 0.105968]], dtype=torch.float32, device='cuda:0')
+
+goal_pose_5:
+  position = torch.tensor([[0.011297, -0.049672, 0.389075]], dtype=torch.float32, device='cuda:0'),
+  quaternion = torch.tensor([[0.773831, -0.078589, 0.619771, -0.104368]], dtype=torch.float32, device='cuda:0')
+
+goal_pose_6:
+  position = torch.tensor([[0.131297, 0.000328, 0.339075]], dtype=torch.float32, device='cuda:0'),
+  quaternion = torch.tensor([[0.682076, 0.119076, 0.710391, 0.126245]], dtype=torch.float32, device='cuda:0')
+
+goal_pose_7:
+  position = torch.tensor([[-0.008703, 0.000328, 0.339075]], dtype=torch.float32, device='cuda:0'),
+  quaternion = torch.tensor([[0.681669, -0.121389, 0.710727, -0.124337]], dtype=torch.float32, device='cuda:0')
+
+goal_pose_8:
+  position = torch.tensor([[0.061297, 0.070328, 0.339075]], dtype=torch.float32, device='cuda:0'),
+  quaternion = torch.tensor([[0.556582, -0.000988, 0.830791, 0.001158]], dtype=torch.float32, device='cuda:0')
+
+goal_pose_9:
+  position = torch.tensor([[0.061297, -0.069672, 0.339075]], dtype=torch.float32, device='cuda:0'),
+  quaternion = torch.tensor([[0.807163, -0.001325, 0.590326, 0.000750]], dtype=torch.float32, device='cuda:0')

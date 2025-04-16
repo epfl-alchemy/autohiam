@@ -25,10 +25,16 @@ setup(
             'gripper_basic = piper_control.gripper_control_basic:main',
             'gen = piper_control.motion_gen_curobo:main',
             'gen_gripper = piper_control.motion_gen_curobo_gripper:main',
+            'gen_single = piper_control.motion_gen_single:main',
             'exec = piper_control.execute_motion:main',
             'exec_single = piper_control.execute_single_motion:main',
             'cali = piper_control.cali_positions:main',
-            'demo = piper_control.demo:main'
+            'demo = piper_control.demo:main',
+            'ee_pose = piper_control.listen_cartesian:main',
+            'test = piper_control.test:main',
+            'service = piper_control.service_function:main',
+            'client = piper_control.client_function:main',
+            'cumotion = piper_control.cumotion_service:main'
         ],
     },
 )

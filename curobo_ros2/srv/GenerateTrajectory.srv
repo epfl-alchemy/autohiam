@@ -1,0 +1,13 @@
+# Request
+geometry_msgs/Pose goal_pose
+bool use_joint_state
+float32[] goal_state
+
+---
+# Response
+bool success
+string status
+float32[] trajectory_positions
+float32[] trajectory_velocities
+float32[] trajectory_accelerations
+float32 dt

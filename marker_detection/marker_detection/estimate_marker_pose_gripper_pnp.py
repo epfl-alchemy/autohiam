@@ -132,67 +132,89 @@ class ArucoNode(Node):
 
         if marker_ids is not None:
             cv2.aruco.drawDetectedMarkers(current_frame, corners, marker_ids)
-            rvecs, tvecs, _ = cv2.aruco.estimatePoseSingleMarkers(corners, self.aruco_marker_side_length, self.mtx, self.dst)
             
             for i in range(len(marker_ids)):
-                R_marker2camera = cv2.Rodrigues(rvecs[i][0])[0]
-                t_marker2camera = tvecs[i][0]
-                T_marker2camera = np.zeros((4,4))
-                T_marker2camera[:3, :3] = R_marker2camera
-                T_marker2camera[:3, 3] = t_marker2camera
-                T_marker2camera[3, 3] = 1
-                T_camera2world = self.get_full_transformation_matrix()
-                T_marker2world = np.dot(T_camera2world, T_marker2camera)
-                R_marker2world = T_marker2world[:3, :3]
-                t_marker2world = T_marker2world[:3, 3]
-                r = R.from_matrix(R_marker2world)
-                quat = r.as_quat()
+                # Define 3D points for a square marker centered at origin
+                marker_size = self.aruco_marker_side_length
+                objPoints = np.array([
+                    [-marker_size/2, marker_size/2, 0],  # top-left
+                    [marker_size/2, marker_size/2, 0],   # top-right
+                    [marker_size/2, -marker_size/2, 0],  # bottom-right
+                    [-marker_size/2, -marker_size/2, 0]  # bottom-left
+                ], dtype=np.float32)
+                
+                # Get 2D corner points from ArUco detection
+                imgPoints = corners[i].reshape(4, 2)
+                
+                # Call solvePnP
+                success, rvec, tvec = cv2.solvePnP(
+                    objPoints, 
+                    imgPoints, 
+                    self.mtx, 
+                    self.dst, 
+                    flags=cv2.SOLVEPNP_IPPE_SQUARE  # Good for planar markers
+                )
+            
+            R_marker2camera = cv2.Rodrigues(rvec)[0]
+            t_marker2camera = tvec.flatten()
+            
+            T_marker2camera = np.zeros((4,4))
+            T_marker2camera[:3, :3] = R_marker2camera
+            T_marker2camera[:3, 3] = t_marker2camera
+            T_marker2camera[3, 3] = 1
 
-                # Create Pose message
-                pose_msg = Pose()
-                pose_msg.position.x = t_marker2world[0]
-                pose_msg.position.y = t_marker2world[1]
-                pose_msg.position.z = t_marker2world[2]
-                pose_msg.orientation.x = quat[0]
-                pose_msg.orientation.y = quat[1]
-                pose_msg.orientation.z = quat[2]
-                pose_msg.orientation.w = quat[3]
+            T_camera2world = self.get_full_transformation_matrix()
+            T_marker2world = np.dot(T_camera2world, T_marker2camera)
+            R_marker2world = T_marker2world[:3, :3]
+            t_marker2world = T_marker2world[:3, 3]
+            r = R.from_matrix(R_marker2world)
+            quat = r.as_quat()
 
-                # Publish the Pose
-                self.pose_publisher.publish(pose_msg)
+            # Create Pose message
+            pose_msg = Pose()
+            pose_msg.position.x = t_marker2world[0]
+            pose_msg.position.y = t_marker2world[1]
+            pose_msg.position.z = t_marker2world[2]
+            pose_msg.orientation.x = quat[0]
+            pose_msg.orientation.y = quat[1]
+            pose_msg.orientation.z = quat[2]
+            pose_msg.orientation.w = quat[3]
+
+            # Publish the Pose
+            self.pose_publisher.publish(pose_msg)
 
 
-                # Log the Pose message as a string
-                pose_info = f"Position: ({pose_msg.position.x}, {pose_msg.position.y}, {pose_msg.position.z}), " \
-                            f"Orientation: ({pose_msg.orientation.x}, {pose_msg.orientation.y}, {pose_msg.orientation.z}, {pose_msg.orientation.w})"
-                self.get_logger().info(pose_info)
+            # Log the Pose message as a string
+            pose_info = f"Position: ({pose_msg.position.x}, {pose_msg.position.y}, {pose_msg.position.z}), " \
+                        f"Orientation: ({pose_msg.orientation.x}, {pose_msg.orientation.y}, {pose_msg.orientation.z}, {pose_msg.orientation.w})"
+            self.get_logger().info(pose_info)
 
-                # Publish visualization marker
-                marker = Marker()
-                marker.header.frame_id = "world"  # or your world frame
-                marker.header.stamp = self.get_clock().now().to_msg()
-                marker.ns = "aruco_marker"
-                marker.id = int(marker_ids[i])
-                marker.type = Marker.CUBE
-                marker.action = Marker.ADD
-                marker.pose.position.x = t_marker2world[0]
-                marker.pose.position.y = t_marker2world[1]
-                marker.pose.position.z = t_marker2world[2]
-                marker.pose.orientation.x = quat[0]
-                marker.pose.orientation.y = quat[1]
-                marker.pose.orientation.z = quat[2]
-                marker.pose.orientation.w = quat[3]
-                marker.scale.x = 0.1  # Size of the marker (can be adjusted to your ArUco marker size)
-                marker.scale.y = 0.1
-                marker.scale.z = 0.01
-                marker.color.a = 1.0  # Don't forget to set the alpha!
-                marker.color.r = 1.0
-                marker.color.g = 0.0
-                marker.color.b = 0.0
-                self.marker_pub.publish(marker)
+            # Publish visualization marker
+            marker = Marker()
+            marker.header.frame_id = "world"  # or your world frame
+            marker.header.stamp = self.get_clock().now().to_msg()
+            marker.ns = "aruco_marker"
+            marker.id = int(marker_ids[i])
+            marker.type = Marker.CUBE
+            marker.action = Marker.ADD
+            marker.pose.position.x = t_marker2world[0]
+            marker.pose.position.y = t_marker2world[1]
+            marker.pose.position.z = t_marker2world[2]
+            marker.pose.orientation.x = quat[0]
+            marker.pose.orientation.y = quat[1]
+            marker.pose.orientation.z = quat[2]
+            marker.pose.orientation.w = quat[3]
+            marker.scale.x = 0.1  # Size of the marker (can be adjusted to your ArUco marker size)
+            marker.scale.y = 0.1
+            marker.scale.z = 0.01
+            marker.color.a = 1.0  # Don't forget to set the alpha!
+            marker.color.r = 1.0
+            marker.color.g = 0.0
+            marker.color.b = 0.0
+            self.marker_pub.publish(marker)
 
-                # Draw the axes on the marker
-                cv2.drawFrameAxes(current_frame, self.mtx, self.dst, rvecs[i], tvecs[i], 0.05)
+            # Draw the axes on the marker
+            cv2.drawFrameAxes(current_frame, self.mtx, self.dst, rvec, tvec, 0.05)
 
         cv2.namedWindow("camera", cv2.WINDOW_NORMAL)
         cv2.resizeWindow("camera", 700, 500)

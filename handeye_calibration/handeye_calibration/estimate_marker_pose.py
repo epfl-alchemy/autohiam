@@ -90,36 +90,11 @@ class ArucoNode(Node):
         """ Convert a quaternion into a full three-dimensional rotation matrix. """
         return R.from_quat([x, y, z, w]).as_matrix()    
 
-    def publish_transform(self, translation_vector, rotation_matrix, frame_id, child_frame_id):
-        t = TransformStamped()
-        t.header.stamp = self.get_clock().now().to_msg()
-        t.header.frame_id = frame_id
-        t.child_frame_id = child_frame_id
-        # Set the translation
-        t.transform.translation.x = translation_vector[0]
-        t.transform.translation.y = translation_vector[1]
-        t.transform.translation.z = translation_vector[2]
-
-        # Convert the rotation matrix to a quaternion
-        transformation_matrix = np.eye(4)
-        transformation_matrix[:3, :3] = rotation_matrix
-        transformation_matrix[:3, 3] = translation_vector
-        quaternion = tf_transformations.quaternion_from_matrix(transformation_matrix)
-
-        t.transform.rotation.x = quaternion[0]
-        t.transform.rotation.y = quaternion[1]
-        t.transform.rotation.z = quaternion[2]
-        t.transform.rotation.w = quaternion[3]
-
-        self.tfbroadcaster.sendTransform(t)
-
     def listener_callback(self, data):
         current_frame = self.bridge.imgmsg_to_cv2(data)
         corners, marker_ids, rejected = cv2.aruco.detectMarkers(current_frame, self.this_aruco_dictionary, parameters=self.this_aruco_parameters)
 
-        if marker_ids is None:
-            self.get_logger().info("No marker has been detected.")
-        elif marker_ids is not None:
+        if marker_ids is not None:
             # self.get_logger().info("Marker detected.")
             cv2.aruco.drawDetectedMarkers(current_frame, corners, marker_ids)
             rvecs, tvecs, _ = cv2.aruco.estimatePoseSingleMarkers(corners, self.aruco_marker_side_length, self.mtx, self.dst)

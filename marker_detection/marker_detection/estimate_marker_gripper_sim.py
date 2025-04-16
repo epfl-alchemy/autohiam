@@ -108,8 +108,11 @@ class ArucoNode(Node):
             ('world', 'base_link'), ('base_link', 'link1'),
             ('link1', 'link2'), ('link2', 'link3'), 
             ('link3', 'link4'), ('link4', 'link5'), 
-            ('link5', 'link6'), ('link6', 'gripper_base'),
-            ('gripper_base', 'camera_link'), ('camera_link', 'camera_link_optical')
+            ('link5', 'link6'), 
+            # ('link6', 'gripper_base'),
+            # ('gripper_base', 'camera_link'), 
+            ('link6','camera_link'),
+            ('camera_link', 'camera_link_optical')
         ]
         for (frame_id, child_frame_id) in link_order:
             if (frame_id, child_frame_id) in self.transformations:
