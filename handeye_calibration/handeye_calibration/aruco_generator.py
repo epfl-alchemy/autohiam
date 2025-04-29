@@ -3,7 +3,7 @@ import numpy as np
 
 # Define ArUco dictionary and marker ID
 aruco_dict_name = cv2.aruco.DICT_ARUCO_ORIGINAL  # Change this if needed
-marker_id = 10  # Change this to the desired marker ID
+marker_id = 100  # Change this to the desired marker ID
 marker_size = 150  # Size in pixels
 
 # Get the dictionary

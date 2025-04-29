@@ -22,7 +22,7 @@ class GripperExecutionerNode(Node):
             self.get_logger().info("Waiting for action server to become available...")
         self.get_logger().info("Action server available.")
 
-    def execute(self, positions: list, sec_from_start: int = 15):
+    def execute(self, positions: list, sec_from_start: int = 5):
         if len(positions) != 1:
             self.get_logger().error("Invalid number of gripper joint positions.")
             return
@@ -75,8 +75,8 @@ def main(args: list = None) -> None:
     # Define gripper positions (in degrees) for joint7 and joint8
     gripper_positions_degrees = [
         [0.0], 
-        [0.04], 
-        [0.0], 
+        # [0.04], 
+        # [0.0], 
     ]
 
     # Convert positions from degrees to radians

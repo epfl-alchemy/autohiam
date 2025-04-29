@@ -19,7 +19,7 @@ class StartStateNode(Node):
             self.get_logger().info("Waiting for action server to become available...")
         self.get_logger().info("Action server available.")
 
-    def execute(self, positions: list, sec_from_start: int = 15):
+    def execute(self, positions: list, sec_from_start: int = 10):
         if len(positions) != 6:
             self.get_logger().error("Invalid number of joint positions.")
             return
@@ -69,7 +69,7 @@ def main(args: list = None) -> None:
         "joint_trajectory_executioner_node"
     )
 
-    start_pose = [0.0, 0.345, -0.415, 0.0, 0.488, 0.0]
+    start_pose = [0.0, 0.1222, -0.3840, 0.0, 0.7679, 0.0]
 
     start_state_node.execute(start_pose)
 

@@ -34,7 +34,15 @@ setup(
             'test = piper_control.test:main',
             'service = piper_control.service_function:main',
             'client = piper_control.client_function:main',
-            'cumotion = piper_control.cumotion_service:main'
+            'cumotion = piper_control.cumotion_service:main',
+            'autohiam = piper_control.autohiam:main',
+            'pick_up_sample = piper_control.pick_up_sample:main',
+            'open_gripper = piper_control.gripper_open:main',
+            'close_gripper = piper_control.gripper_close:main',
+            'move_into_beaker = piper_control.move_into_beaker:main',
+            'cartesian_control_client = piper_control.cartesian_control_client:main',
+            'zero = piper_control.zero_position:main',
+            'heater = piper_control.move_into_heater:main'
         ],
     },
 )

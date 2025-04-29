@@ -6,11 +6,15 @@ from sensor_msgs.msg import Image
 from geometry_msgs.msg import Pose
 from tf2_msgs.msg import TFMessage
 from visualization_msgs.msg import Marker
-from std_msgs.msg import ColorRGBA
+from geometry_msgs.msg import TransformStamped
+import tf2_ros
 
 import cv2
 import numpy as np
 from scipy.spatial.transform import Rotation as R
+import yaml
+
+from curobo_ros2.msg import MarkerPoseWithID
 
 # Create a QoS profile for subscribing to /tf_static
 qos_profile = QoSProfile(depth=10, durability=DurabilityPolicy.TRANSIENT_LOCAL)
@@ -40,13 +44,36 @@ class ArucoNode(Node):
     def __init__(self):
         super().__init__('aruco_node')
 
+        with open('src/handeye_calibration/config.yaml', 'r') as file:
+            config = yaml.safe_load(file)
+        self.handeye_result_file_name = config["handeye_result_file_name"]
+        self.ee_link = config["ee_link"]
+        self.calculated_camera_optical_frame_name = config["calculated_camera_optical_frame_name"]
+
+        with open(self.handeye_result_file_name, 'r') as file_2:
+            hand_eye_data = yaml.safe_load(file_2)
+            if isinstance(hand_eye_data, list) and len(hand_eye_data) > 1:
+                hand_eye_data = hand_eye_data[-1]
+            elif isinstance(hand_eye_data, list):
+                hand_eye_data = hand_eye_data[0]
+
+        T = np.eye(4)
+        T[:3, :3] = np.array(hand_eye_data['rotation']).reshape((3, 3))
+        T[:3, 3] = np.array(hand_eye_data['translation']).reshape((3,))
+
+        self.translation = np.array(hand_eye_data['translation']).reshape((3, 1))
+        self.rotation = np.array(hand_eye_data['rotation']).reshape((3, 3))
+        r = R.from_matrix(self.rotation)
+        self.handeye_quaternion = r.as_quat() #xyzw
+        self.tf_broadcaster = tf2_ros.TransformBroadcaster(self)
+
         # Declare parameters
         self.declare_parameters(namespace='', parameters=[
             ('aruco_dictionary_name', 'DICT_ARUCO_ORIGINAL'),
             ('aruco_marker_side_length', 0.038),
             ('camera_calibration_parameters_filename', '/home/szhuang/autohiam_ws/src/marker_detection/camera_info.yaml'),
             ('image_topic', '/camera/camera/color/image_raw'), #/camera/camera/color/image_raw #/camera/image_raw
-            ('aruco_marker_name', 'aruco_marker')
+            ('aruco_marker_name', 'aruco_marker'),
         ])
         # Read parameters
         aruco_dictionary_name = self.get_parameter("aruco_dictionary_name").get_parameter_value().string_value
@@ -77,12 +104,17 @@ class ArucoNode(Node):
         # Create the publisher
         self.pose_publisher = self.create_publisher(Pose, 'aruco_marker_pose', 10)
         self.marker_pub = self.create_publisher(Marker,'marker',10)
+        self.marker_pose_with_id_pub = self.create_publisher(MarkerPoseWithID, 'marker_pose_with_id', 10)
+
         # Used to convert between ROS and OpenCV images
         self.bridge = CvBridge()
 
         self.subscription_tf = self.create_subscription(TFMessage, '/tf', self.listener_callback_tf, 10)
         self.subscription_tf_static = self.create_subscription(TFMessage,'/tf_static', self.listener_callback_tf_static, qos_profile)
         self.transformations = {}
+
+        timer_period = 0.1  # seconds
+        self.timer = self.create_timer(timer_period, self.publish_handeye_transform)
 
     def listener_callback_tf(self, msg):
         """ Handle incoming transform messages. """
@@ -125,6 +157,22 @@ class ArucoNode(Node):
         T_inv = np.linalg.inv(T)
         # T is lbr/camera_link_optical points to world
         return T
+    
+    def publish_handeye_transform(self):
+        transform_msg = TransformStamped()
+        transform_msg.header.stamp = self.get_clock().now().to_msg()
+        transform_msg.header.frame_id = self.ee_link
+        transform_msg.child_frame_id = self.calculated_camera_optical_frame_name
+        transform_msg.transform.translation.x = self.translation[0, 0]
+        transform_msg.transform.translation.y = self.translation[1, 0]
+        transform_msg.transform.translation.z = self.translation[2, 0]
+        transform_msg.transform.rotation.x = self.handeye_quaternion[0]
+        transform_msg.transform.rotation.y = self.handeye_quaternion[1]
+        transform_msg.transform.rotation.z = self.handeye_quaternion[2]
+        transform_msg.transform.rotation.w = self.handeye_quaternion[3]
+
+        # Send the transform from camera_sim to ee
+        self.tf_broadcaster.sendTransform(transform_msg)
 
     def listener_callback(self, data):
         current_frame = self.bridge.imgmsg_to_cv2(data)
@@ -190,6 +238,13 @@ class ArucoNode(Node):
                 marker.color.g = 0.0
                 marker.color.b = 0.0
                 self.marker_pub.publish(marker)
+
+                # Publish marker with id
+                # Create and publish MarkerPoseWithID
+                pose_with_id_msg = MarkerPoseWithID()
+                pose_with_id_msg.marker_pose = pose_msg
+                pose_with_id_msg.id = int(marker_ids[i])
+                self.marker_pose_with_id_pub.publish(pose_with_id_msg)
 
                 # Draw the axes on the marker
                 cv2.drawFrameAxes(current_frame, self.mtx, self.dst, rvecs[i], tvecs[i], 0.05)

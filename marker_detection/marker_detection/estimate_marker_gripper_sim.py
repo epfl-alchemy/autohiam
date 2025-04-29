@@ -12,6 +12,8 @@ import cv2
 import numpy as np
 from scipy.spatial.transform import Rotation as R
 
+from curobo_ros2.msg import MarkerPoseWithID
+
 # Create a QoS profile for subscribing to /tf_static
 qos_profile = QoSProfile(depth=10, durability=DurabilityPolicy.TRANSIENT_LOCAL)
 
@@ -44,7 +46,7 @@ class ArucoNode(Node):
         self.declare_parameters(namespace='', parameters=[
             ('aruco_dictionary_name', 'DICT_ARUCO_ORIGINAL'),
             ('aruco_marker_side_length', 0.150),
-            ('camera_calibration_parameters_filename', '/home/szhuang/autohiam_ws/src/marker_detection/camera_info.yaml'),
+            ('camera_calibration_parameters_filename', '/home/szhuang/autohiam_ws/src/marker_detection/camera_info_640_480.yaml'),
             ('image_topic', '/camera/image_raw'), #/camera/camera/color/image_raw #/camera/image_raw
             ('aruco_marker_name', 'aruco_marker')
         ])
@@ -77,6 +79,9 @@ class ArucoNode(Node):
         # Create the publisher
         self.pose_publisher = self.create_publisher(Pose, 'aruco_marker_pose', 10)
         self.marker_pub = self.create_publisher(Marker,'marker',10)
+        self.marker_pose_with_id_pub = self.create_publisher(MarkerPoseWithID, 'marker_pose_with_id', 10)
+
+
         # Used to convert between ROS and OpenCV images
         self.bridge = CvBridge()
 
@@ -101,7 +106,6 @@ class ArucoNode(Node):
         """ Convert a quaternion into a full three-dimensional rotation matrix. """
         return R.from_quat([x, y, z, w]).as_matrix()
 
-
     def get_full_transformation_matrix(self):
         T = np.eye(4)  # Start with the identity matrix
         link_order = [
@@ -109,9 +113,9 @@ class ArucoNode(Node):
             ('link1', 'link2'), ('link2', 'link3'), 
             ('link3', 'link4'), ('link4', 'link5'), 
             ('link5', 'link6'), 
-            # ('link6', 'gripper_base'),
-            # ('gripper_base', 'camera_link'), 
-            ('link6','camera_link'),
+            ('link6', 'gripper_base'),
+            ('gripper_base', 'camera_link'), 
+            # ('link6','camera_link'),
             ('camera_link', 'camera_link_optical')
         ]
         for (frame_id, child_frame_id) in link_order:
@@ -192,6 +196,14 @@ class ArucoNode(Node):
                 marker.color.g = 0.0
                 marker.color.b = 0.0
                 self.marker_pub.publish(marker)
+
+                # Publish marker with id
+                # Create and publish MarkerPoseWithID
+                pose_with_id_msg = MarkerPoseWithID()
+                pose_with_id_msg.marker_pose = pose_msg
+                pose_with_id_msg.id = int(marker_ids[i])
+                self.marker_pose_with_id_pub.publish(pose_with_id_msg)
+
 
                 # Draw the axes on the marker
                 cv2.drawFrameAxes(current_frame, self.mtx, self.dst, rvecs[i], tvecs[i], 0.05)

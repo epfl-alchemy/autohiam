@@ -23,6 +23,8 @@ from curobo_ros2.srv import GenerateTrajectory
 
 import itertools
 from array import array
+from concurrent.futures import Future
+import time
 
 from rclpy.callback_groups import MutuallyExclusiveCallbackGroup
 
@@ -31,7 +33,7 @@ class cuRoboGenService(Node):
         super().__init__(node_name=node_name)
         self.tensor_args = TensorDeviceType()
         self.declare_parameter('robot', 'piper_no_gripper.yml')
-        self.declare_parameter('time_dilation_factor', 1.0)
+        self.declare_parameter('time_dilation_factor', 0.6)
         self.declare_parameter('interpolation_dt', 0.005)
         self.declare_parameter('collision_cache_mesh', 20)
         self.declare_parameter('collision_cache_cuboid', 20)
@@ -187,8 +189,8 @@ class cuRoboGenService(Node):
                     start_state,
                     goal_state,
                     MotionGenPlanConfig(
-                        max_attempts=10, 
-                        enable_graph_attempt=5, 
+                        max_attempts=15, 
+                        enable_graph_attempt=8, 
                         time_dilation_factor=time_dilation_factor),
                 )
                 self.get_logger().error("Goal joint state planning is not implemented yet in service.")
@@ -249,7 +251,7 @@ class cuRoboGenService(Node):
                 else:
                     self.get_logger().info("Motion planning and execution successful.")
                     response.success = True
-                    response.status = "Planning and execution successful"
+                    response.status = "Planning and execution successful!!!"
                     self.get_logger().info(response.status)
 
             else:
@@ -262,23 +264,16 @@ class cuRoboGenService(Node):
             response.success = False
             response.status = f"Exception: {str(e)}"
             return response
-        
+
+
     def execute_trajectory(self, positions, velocities, accelerations, dt):
         try:
-            # self.get_logger().info("Creating trajectory goal...")
-
             goal = FollowJointTrajectory.Goal()
             goal.goal_time_tolerance.sec = 1
-
-            # Add joint names
             goal.trajectory.joint_names = [f"joint{i + 1}" for i in range(6)]
 
-            # Add trajectory points
-            self.get_logger().info(f"Adding {len(positions)} trajectory points...")
             time_from_start_sec = 0.0
             for i, position in enumerate(positions):
-                if i == 0 or i == len(positions) - 1:
-                    self.get_logger().info(f"Point {i}: pos={position[:3]}...")
                 point = JointTrajectoryPoint()
                 point.positions = position
                 if velocities:
@@ -290,58 +285,135 @@ class cuRoboGenService(Node):
                 goal.trajectory.points.append(point)
                 time_from_start_sec += dt
 
-            # Send goal - ensure server is ready first
-            server_ready = self.joint_trajectory_action_client.wait_for_server(timeout_sec=5.0)
-            if not server_ready:
-                self.get_logger().error("Action server not ready after timeout")
-                return False, "Action server not ready after timeout"
+            if not self.joint_trajectory_action_client.wait_for_server(timeout_sec=5.0):
+                self.get_logger().error("Action server not ready")
+                return False, "Action server not ready"
 
             self.get_logger().info("Sending trajectory goal...")
-            send_goal_future = self.joint_trajectory_action_client.send_goal_async(goal)
-            
-            # Use a proper timeout for waiting on the future
-            rclpy.spin_until_future_complete(self, send_goal_future, timeout_sec=5.0)
-            
-            if not send_goal_future.done():
-                self.get_logger().error("Sending goal timed out")
-                return False, "Sending goal timed out"
-            
-            goal_handle = send_goal_future.result()
-            if goal_handle is None:
-                self.get_logger().error("Goal handle is None")
-                return False, "Goal handle is None"
-                
-            if not goal_handle.accepted:
-                self.get_logger().error("Goal was rejected")
-                return False, "Goal rejected"
+            result_future = Future()
 
-            self.get_logger().info("Goal accepted. Waiting for result...")
-            
-            # Get the result with proper timeout
-            get_result_future = goal_handle.get_result_async()
-            rclpy.spin_until_future_complete(self, get_result_future, timeout_sec=30.0)
-            
-            if not get_result_future.done():
-                self.get_logger().error("Getting result timed out")
-                return False, "Getting result timed out"
-                
-            result = get_result_future.result()
-            if result is None:
-                self.get_logger().error("Result is None")
-                return False, "Result is None"
-                
-            if result.result.error_code == FollowJointTrajectory.Result.SUCCESSFUL:
-                self.get_logger().info("Trajectory execution succeeded")
-                return True, "Execution succeeded"
-            else:
-                self.get_logger().error(f"Execution failed with error code: {result.result.error_code}")
-                return False, f"Execution failed (code {result.result.error_code})"
+            def send_goal_done_callback(fut):
+                goal_handle = fut.result()
+                if not goal_handle.accepted:
+                    self.get_logger().error("Goal was rejected")
+                    result_future.set_result((False, "Goal rejected"))
+                    return
+
+                self.get_logger().info("Goal accepted. Waiting for result...")
+
+                result_fut = goal_handle.get_result_async()
+
+                def result_done_callback(res_fut):
+                    result = res_fut.result()
+                    if result is None:
+                        self.get_logger().error("Result is None")
+                        result_future.set_result((False, "Result is None"))
+                        return
+
+                    if result.result.error_code == FollowJointTrajectory.Result.SUCCESSFUL:
+                        self.get_logger().info("Trajectory execution succeeded")
+                        result_future.set_result((True, "Execution succeeded"))
+                    else:
+                        self.get_logger().error(f"Execution failed: {result.result.error_code}")
+                        result_future.set_result((False, f"Execution failed (code {result.result.error_code})"))
+
+                result_fut.add_done_callback(result_done_callback)
+
+            send_goal_fut = self.joint_trajectory_action_client.send_goal_async(goal)
+            send_goal_fut.add_done_callback(send_goal_done_callback)
+
+            # Wait for result in a non-blocking way
+            while not result_future.done():
+                time.sleep(0.01)
+
+            return result_future.result()
 
         except Exception as e:
             self.get_logger().error(f"Exception in execute_trajectory: {e}")
             import traceback
             self.get_logger().error(f"Traceback: {traceback.format_exc()}")
             return False, f"Exception: {str(e)}"
+
+        
+    # def execute_trajectory(self, positions, velocities, accelerations, dt):
+    #     try:
+    #         # self.get_logger().info("Creating trajectory goal...")
+
+    #         goal = FollowJointTrajectory.Goal()
+    #         goal.goal_time_tolerance.sec = 1
+
+    #         # Add joint names
+    #         goal.trajectory.joint_names = [f"joint{i + 1}" for i in range(6)]
+
+    #         # Add trajectory points
+    #         self.get_logger().info(f"Adding {len(positions)} trajectory points...")
+    #         time_from_start_sec = 0.0
+    #         for i, position in enumerate(positions):
+    #             if i == 0 or i == len(positions) - 1:
+    #                 self.get_logger().info(f"Point {i}: pos={position[:3]}...")
+    #             point = JointTrajectoryPoint()
+    #             point.positions = position
+    #             if velocities:
+    #                 point.velocities = velocities[i]
+    #             if accelerations:
+    #                 point.accelerations = accelerations[i]
+    #             point.time_from_start.sec = int(time_from_start_sec)
+    #             point.time_from_start.nanosec = int((time_from_start_sec - int(time_from_start_sec)) * 1e9)
+    #             goal.trajectory.points.append(point)
+    #             time_from_start_sec += dt
+
+    #         # Send goal - ensure server is ready first
+    #         server_ready = self.joint_trajectory_action_client.wait_for_server(timeout_sec=5.0)
+    #         if not server_ready:
+    #             self.get_logger().error("Action server not ready after timeout")
+    #             return False, "Action server not ready after timeout"
+
+    #         self.get_logger().info("Sending trajectory goal...")
+    #         send_goal_future = self.joint_trajectory_action_client.send_goal_async(goal)
+            
+    #         # Use a proper timeout for waiting on the future
+    #         rclpy.spin_until_future_complete(self, send_goal_future, timeout_sec=5.0)
+            
+    #         if not send_goal_future.done():
+    #             self.get_logger().error("Sending goal timed out")
+    #             return False, "Sending goal timed out"
+            
+    #         goal_handle = send_goal_future.result()
+    #         if goal_handle is None:
+    #             self.get_logger().error("Goal handle is None")
+    #             return False, "Goal handle is None"
+                
+    #         if not goal_handle.accepted:
+    #             self.get_logger().error("Goal was rejected")
+    #             return False, "Goal rejected"
+
+    #         self.get_logger().info("Goal accepted. Waiting for result...")
+            
+    #         # Get the result with proper timeout
+    #         get_result_future = goal_handle.get_result_async()
+    #         rclpy.spin_until_future_complete(self, get_result_future, timeout_sec=30.0)
+            
+    #         if not get_result_future.done():
+    #             self.get_logger().error("Getting result timed out")
+    #             return False, "Getting result timed out"
+                
+    #         result = get_result_future.result()
+    #         if result is None:
+    #             self.get_logger().error("Result is None")
+    #             return False, "Result is None"
+                
+    #         if result.result.error_code == FollowJointTrajectory.Result.SUCCESSFUL:
+    #             self.get_logger().info("Trajectory execution succeeded")
+    #             return True, "Execution succeeded"
+    #         else:
+    #             self.get_logger().error(f"Execution failed with error code: {result.result.error_code}")
+    #             return False, f"Execution failed (code {result.result.error_code})"
+
+    #     except Exception as e:
+    #         self.get_logger().error(f"Exception in execute_trajectory: {e}")
+    #         import traceback
+    #         self.get_logger().error(f"Traceback: {traceback.format_exc()}")
+    #         return False, f"Exception: {str(e)}"
 
 def main():
     rclpy.init()
