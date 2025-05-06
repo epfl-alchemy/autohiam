@@ -42,7 +42,8 @@ setup(
             'move_into_beaker = piper_control.move_into_beaker:main',
             'cartesian_control_client = piper_control.cartesian_control_client:main',
             'zero = piper_control.zero_position:main',
-            'heater = piper_control.move_into_heater:main'
+            'heater = piper_control.move_into_heater:main',
+            'cartesian_control_moveit = piper_control.cartesian_control_moveit:main'
         ],
     },
 )

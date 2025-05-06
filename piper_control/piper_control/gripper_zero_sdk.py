@@ -45,5 +45,5 @@ if __name__ == "__main__":
     piper.EnableArm(7)
     enable_fun(piper)
 
-    piper.GripperCtrl(30*1000, 1000, 0x01, 0)
+    piper.GripperCtrl(0, 1000, 0x01, 0)
     print("Gripper closed.")

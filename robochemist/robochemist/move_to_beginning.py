@@ -10,10 +10,16 @@ import quaternion
 
 from piper_control.utils import quaternion_to_rotation_matrix, calculate_new_point
 
-class PickUpSample(Node):
+class MoveIntoBeaker(Node):
     def __init__(self):
-        super().__init__('pick_up_sample')
-        self.declare_parameter('marker_id', 10)
+        super().__init__('move_into_beaker')
+        self.declare_parameter('marker_id', 55)
+        # self.declare_parameter('x_offset', 0.00)
+        self.declare_parameter('y_offset', 0.125)
+        # self.declare_parameter('z_offset', 0.00)
+        # self.x_offset = self.get_parameter('x_offset').get_parameter_value().double_value
+        self.y_offset = self.get_parameter('y_offset').get_parameter_value().double_value
+        # self.z_offset = self.get_parameter('z_offset').get_parameter_value().double_value
         self.expected_id = self.get_parameter('marker_id').get_parameter_value().integer_value
         self.get_logger().info(f'Looking for marker ID: {self.expected_id}')
         
@@ -58,19 +64,23 @@ class PickUpSample(Node):
 
         x, y, z, qw, qx, qy, qz = self.compute_target_pose(
                 msg.marker_pose,
-                distance=0.095,
+                distance=0.039,
                 x_offset=0.0,
-                y_offset=-0.01,
-                z_offset=0.06 + 0.03
+                y_offset=self.y_offset-0.01,
+                z_offset=0.230
         )
         goal_pose = Pose()
         goal_pose.position.x = x
         goal_pose.position.y = y
         goal_pose.position.z = z
-        goal_pose.orientation.w = qw
+        # goal_pose.orientation.w = 0.7071
+        # goal_pose.orientation.x = 0.0
+        # goal_pose.orientation.y = 0.7071
+        # goal_pose.orientation.z = 0.0
         goal_pose.orientation.x = qx
-        goal_pose.orientation.y = qy
-        goal_pose.orientation.z = qz
+        goal_pose.orientation.y =  qy
+        goal_pose.orientation.z =  qz
+        goal_pose.orientation.w =  qw
 
         # Send the goal to trajectory planner
         self.send_trajectory_request(goal_pose)
@@ -101,10 +111,10 @@ class PickUpSample(Node):
         y = round(y_new + y_offset, 4)
         z = round(z_new + z_offset, 4)
 
-        qw = result_quat[3]
-        qx = result_quat[0]
-        qy = result_quat[1]
-        qz = result_quat[2]
+        qw = round(result_quat[3], 4)
+        qx = round(result_quat[0], 4)
+        qy = round(result_quat[1], 4)
+        qz = round(result_quat[2], 4)
 
         return x, y, z, qw, qx, qy, qz
 
@@ -144,9 +154,8 @@ class PickUpSample(Node):
 
 def main():
     rclpy.init()
-    node = PickUpSample()
+    node = MoveIntoBeaker()
     
-    # Use a MultiThreadedExecutor as imported
     executor = MultiThreadedExecutor()
     executor.add_node(node)
     
@@ -155,9 +164,6 @@ def main():
     except KeyboardInterrupt:
         pass
     finally:
-        # No need to call destroy_node() or rclpy.shutdown() here
-        # The node is already destroyed by the time we get here
-        # and rclpy.shutdown() was already called by request_shutdown()
         pass
 
 if __name__ == '__main__':

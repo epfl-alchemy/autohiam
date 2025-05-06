@@ -139,14 +139,13 @@ class PickUpSample(Node):
         """Request shutdown but don't actually do it - let main() handle it"""
         self.get_logger().info("Requesting node shutdown...")
         self.shutdown_requested = True
-        # Signal the executor to stop
+
         rclpy.shutdown()
 
 def main():
     rclpy.init()
     node = PickUpSample()
     
-    # Use a MultiThreadedExecutor as imported
     executor = MultiThreadedExecutor()
     executor.add_node(node)
     
@@ -155,9 +154,6 @@ def main():
     except KeyboardInterrupt:
         pass
     finally:
-        # No need to call destroy_node() or rclpy.shutdown() here
-        # The node is already destroyed by the time we get here
-        # and rclpy.shutdown() was already called by request_shutdown()
         pass
 
 if __name__ == '__main__':

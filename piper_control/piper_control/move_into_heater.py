@@ -64,10 +64,10 @@ class PickUpSample(Node):
 
         x, y, z, qw, qx, qy, qz = self.compute_target_pose(
                 msg.marker_pose,
-                distance=0.085,
+                distance=0.071,
                 x_offset=0.0,
                 y_offset=-0.01,
-                z_offset=0.19,
+                z_offset=0.220 - 0.015,
             )
         goal_pose = Pose()
         goal_pose.position.x = x
@@ -81,10 +81,10 @@ class PickUpSample(Node):
         # goal_pose.position.x = msg.marker_pose.position.x - 0.0450
         # goal_pose.position.y = msg.marker_pose.position.y
         # goal_pose.position.z = msg.marker_pose.position.z + 0.200
-        # goal_pose.orientation.x = -0.0011722
-        # goal_pose.orientation.y =  0.7114764
-        # goal_pose.orientation.z =  0.0026968
-        # goal_pose.orientation.w =  0.7027037
+        # goal_pose.orientation.w = 0.7071
+        # goal_pose.orientation.x = 0.0
+        # goal_pose.orientation.y = 0.7071
+        # goal_pose.orientation.z = 0.0
 
         # Send the goal to trajectory planner
         self.send_trajectory_request(goal_pose)
@@ -115,10 +115,10 @@ class PickUpSample(Node):
         y = round(y_new + y_offset, 4)
         z = round(z_new + z_offset, 4)
 
-        qw = result_quat[3]
-        qx = result_quat[0]
-        qy = result_quat[1]
-        qz = result_quat[2]
+        qw = round(result_quat[3], 4)
+        qx = round(result_quat[0], 4)
+        qy = round(result_quat[1], 4)
+        qz = round(result_quat[2], 4)
 
         return x, y, z, qw, qx, qy, qz
 
