@@ -45,7 +45,7 @@ class ArucoNode(Node):
         # Declare parameters
         self.declare_parameters(namespace='', parameters=[
             ('aruco_dictionary_name', 'DICT_ARUCO_ORIGINAL'),
-            ('aruco_marker_side_length', 0.150),
+            ('aruco_marker_side_length', 0.170),
             ('camera_calibration_parameters_filename', '/home/szhuang/autohiam_ws/src/marker_detection/camera_info_640_480.yaml'),
             ('image_topic', '/camera/image_raw'), #/camera/camera/color/image_raw #/camera/image_raw
             ('aruco_marker_name', 'aruco_marker')

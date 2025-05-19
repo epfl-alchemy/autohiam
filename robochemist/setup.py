@@ -21,19 +21,16 @@ setup(
     entry_points={
         'console_scripts': [
             'pickup = robochemist.pickup:main',
+            'moveto = robochemist.moveto:main',
             'heater = robochemist.move_into_heater:main',
-            'beaker = robochemist.move_into_beaker:main',
             'open_gripper = robochemist.gripper_open:main',
             'close_gripper = robochemist.gripper_close:main',
             'zero_gripper = robochemist.gripper_zero:main',
             'cumotion = robochemist.cumotion_service:main',
-            'start_position = robochemist.start_position:main',
-            'zero = robochemist.zero_position:main',
+            'start_pose = robochemist.start_pose:main',
+            'disable_pose = robochemist.disable_pose:main',
             'cartesian_control_moveit = robochemist.cartesian_control_moveit:main',
-            'cover_base = robochemist.move_to_cover_base:main',
-            'drying_position = robochemist.drying_position:main',
-            'rotate_joint6 = robochemist.rotate_joint6:main',
-            'beginning = robochemist.move_to_beginning:main',
+            'shaking = robochemist.shaking:main',
         ],
     },
 )

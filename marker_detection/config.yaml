@@ -1,11 +1,11 @@
-aruco_dictionary_name: "DICT_ARUCO_ORIGINAL"
-aruco_marker_side_length: 0.0770
-camera_calibration_parameters_filename: "src/handeye_calibration/camera_info.yaml"
+aruco_dictionary_name: "DICT_7X7_250" #DICT_ARUCO_ORIGINAL DICT_7X7_250
+aruco_marker_side_length: 0.038 #0.144 0.038
+camera_calibration_parameters_filename: "src/marker_detection/camera_info.yaml"
 image_topic: "/camera/camera/color/image_raw"
 aruco_marker_name: "aruco_marker"
 calculated_camera_optical_frame_name: "camera_color_optical_frame"
 
 
 base_link: "base_link"
-ee_link: "gripper_base"
+ee_link: "link6"
 world_frame: "world"

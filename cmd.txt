@@ -1,13 +1,7 @@
-ros2 run realsense2_camera realsense2_camera_node \
-  --ros-args \
-  -p enable_color:=true \
-  -p rgb_camera.color_profile:=1280x720x30 \
-  -p rgb_camera.color_format:=BGR8
+ros2 run realsense2_camera realsense2_camera_node   --ros-args   -p enable_color:=true   -p rgb_camera.color_profile:=1920x1080x30 -p rgb_camera.color_format:=BGR8
 
 
 bash can_activate.sh can0 1000000
-
-ros2 run piper piper_single_ctrl --ros-args -p can_port:=can0 -p auto_enable:=false -p gripper_exist:=true -p gripper_val_mutiple:=2
 
 ros2 topic pub /enable_flag std_msgs/msg/Bool data:\ false
 

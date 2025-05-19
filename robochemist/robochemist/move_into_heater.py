@@ -56,10 +56,10 @@ class MoveIntoHeater(Node):
 
         x, y, z, qw, qx, qy, qz = self.compute_target_pose(
                 msg.marker_pose,
-                distance=0.071,
+                distance=0.082,
                 x_offset=0.0,
-                y_offset=-0.01,
-                z_offset=0.230 - 0.015,
+                y_offset=0.0,
+                z_offset=0.215,
         )
         goal_pose = Pose()
         goal_pose.position.x = x

@@ -23,7 +23,7 @@ class StartStateNode(Node):
 
         time.sleep(2)
 
-    def execute(self, positions: list, sec_from_start: int = 10):
+    def execute(self, positions: list, sec_from_start: int = 7):
         if len(positions) != 6:
             self.get_logger().error("Invalid number of joint positions.")
             return
@@ -74,6 +74,7 @@ def main(args: list = None) -> None:
     )
 
     start_pose = [0.0, 0.1222, -0.3840, 0.0, 0.7679, 0.0]
+    # start_pose = [0.0, 0.3491, -0.2793, 0.0, 0.4538, 0.0]
 
     start_state_node.execute(start_pose)
 

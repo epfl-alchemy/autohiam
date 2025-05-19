@@ -15,10 +15,10 @@ class MoveIntoBeaker(Node):
         super().__init__('move_into_beaker')
         self.declare_parameter('marker_id', 55)
         # self.declare_parameter('x_offset', 0.00)
-        self.declare_parameter('y_offset', 0.0125) #0.0125
+        # self.declare_parameter('y_offset', 0.0125) #0.0125
         # self.declare_parameter('z_offset', 0.00)
         # self.x_offset = self.get_parameter('x_offset').get_parameter_value().double_value
-        self.y_offset = self.get_parameter('y_offset').get_parameter_value().double_value
+        # self.y_offset = self.get_parameter('y_offset').get_parameter_value().double_value
         # self.z_offset = self.get_parameter('z_offset').get_parameter_value().double_value
         self.expected_id = self.get_parameter('marker_id').get_parameter_value().integer_value
         self.get_logger().info(f'Looking for marker ID: {self.expected_id}')
@@ -44,6 +44,8 @@ class MoveIntoBeaker(Node):
         self.executed = False  # to ensure we only run once
         self.shutdown_requested = False  # Flag to track shutdown status
 
+        self.pose_buffer = []
+        self.buffer_size = 50 
 
     def marker_listener_callback(self, msg: MarkerPoseWithID):
         if self.executed or self.shutdown_requested:
@@ -60,13 +62,29 @@ class MoveIntoBeaker(Node):
         self.get_logger().info(f"Marker {msg.id} detected.")
 
         self.get_logger().info("Going to pick up the holder...")
+
+        # Add the current pose to the buffer
+        self.pose_buffer.append(msg.marker_pose)
+
+        # Remove the oldest pose if the buffer is full
+        if len(self.pose_buffer) > self.buffer_size:
+            self.pose_buffer.pop(0)
+
+        # Check if the buffer is sufficiently populated
+        if len(self.pose_buffer) < self.buffer_size:
+            self.get_logger().info(f"Collecting more poses... ({len(self.pose_buffer)}/{self.buffer_size})")
+            return
+
+        # Average the poses
+        avg_pose = self.average_poses(self.pose_buffer)
+
         self.executed = True
 
         x, y, z, qw, qx, qy, qz = self.compute_target_pose(
-                msg.marker_pose,
-                distance=0.040,
+                avg_pose,
+                distance=0.055,
                 x_offset=0.0,
-                y_offset=self.y_offset-0.01,
+                y_offset=0.0375,
                 z_offset=0.230
         )
         goal_pose = Pose()
@@ -81,6 +99,8 @@ class MoveIntoBeaker(Node):
         goal_pose.orientation.y =  qy
         goal_pose.orientation.z =  qz
         goal_pose.orientation.w =  qw
+
+        self.get_logger().info(f"Moving to x = {x}, y = {y}, z = {z}")
 
         # Send the goal to trajectory planner
         self.send_trajectory_request(goal_pose)
@@ -117,6 +137,31 @@ class MoveIntoBeaker(Node):
         qz = round(result_quat[2], 4)
 
         return x, y, z, qw, qx, qy, qz
+    
+    def average_poses(self, poses):
+        # Average positions
+        positions = np.array([[p.position.x, p.position.y, p.position.z] for p in poses])
+        avg_position = np.mean(positions, axis=0)
+
+        # Average orientations using quaternion averaging
+        quaternions = np.array([
+            [p.orientation.w, p.orientation.x, p.orientation.y, p.orientation.z]
+            for p in poses
+        ])
+        avg_quat = np.mean(quaternions, axis=0)
+        avg_quat /= np.linalg.norm(avg_quat)  # Normalize
+
+        # Create a new Pose object
+        avg_pose = Pose()
+        avg_pose.position.x = avg_position[0]
+        avg_pose.position.y = avg_position[1]
+        avg_pose.position.z = avg_position[2]
+        avg_pose.orientation.w = avg_quat[0]
+        avg_pose.orientation.x = avg_quat[1]
+        avg_pose.orientation.y = avg_quat[2]
+        avg_pose.orientation.z = avg_quat[3]
+
+        return avg_pose
 
 
     def send_trajectory_request(self, pose: Pose):

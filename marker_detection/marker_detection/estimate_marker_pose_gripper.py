@@ -50,8 +50,16 @@ class ArucoNode(Node):
         self.ee_link = config["ee_link"]
         self.calculated_camera_optical_frame_name = config["calculated_camera_optical_frame_name"]
 
-        with open(self.handeye_result_file_name, 'r') as file_2:
-            hand_eye_data = yaml.safe_load(file_2)
+        with open('src/marker_detection/config.yaml', 'r') as file_2:
+            config_marker = yaml.safe_load(file_2)
+        self.aruco_marker_side_length = config_marker["aruco_marker_side_length"]
+        aruco_dictionary_name = config_marker["aruco_dictionary_name"]
+        self.camera_calibration_parameters_filename = config_marker["camera_calibration_parameters_filename"]
+        image_topic = config_marker["image_topic"]
+        self.aruco_marker_name = config_marker["aruco_marker_name"]
+
+        with open(self.handeye_result_file_name, 'r') as file_3:
+            hand_eye_data = yaml.safe_load(file_3)
             if isinstance(hand_eye_data, list) and len(hand_eye_data) > 1:
                 hand_eye_data = hand_eye_data[-1]
             elif isinstance(hand_eye_data, list):
@@ -68,19 +76,20 @@ class ArucoNode(Node):
         self.tf_broadcaster = tf2_ros.TransformBroadcaster(self)
 
         # Declare parameters
-        self.declare_parameters(namespace='', parameters=[
-            ('aruco_dictionary_name', 'DICT_ARUCO_ORIGINAL'),
-            ('aruco_marker_side_length', 0.038),
-            ('camera_calibration_parameters_filename', '/home/szhuang/autohiam_ws/src/marker_detection/camera_info.yaml'),
-            ('image_topic', '/camera/camera/color/image_raw'), #/camera/camera/color/image_raw #/camera/image_raw
-            ('aruco_marker_name', 'aruco_marker'),
-        ])
+        # self.declare_parameters(namespace='', parameters=[
+            # ('aruco_dictionary_name', 'DICT_7X7_250'),
+            # ('aruco_marker_side_length', 0.144), #0.038
+            # ('camera_calibration_parameters_filename', '/home/szhuang/autohiam_ws/src/marker_detection/camera_info.yaml'),
+            # ('image_topic', '/camera/camera/color/image_raw'), #/camera/camera/color/image_raw #/camera/image_raw
+            # ('aruco_marker_name', 'aruco_marker'),
+        # ])
         # Read parameters
-        aruco_dictionary_name = self.get_parameter("aruco_dictionary_name").get_parameter_value().string_value
-        self.aruco_marker_side_length = self.get_parameter("aruco_marker_side_length").get_parameter_value().double_value
-        self.camera_calibration_parameters_filename = self.get_parameter("camera_calibration_parameters_filename").get_parameter_value().string_value
-        image_topic = self.get_parameter("image_topic").get_parameter_value().string_value
-        self.aruco_marker_name = self.get_parameter("aruco_marker_name").get_parameter_value().string_value
+        # aruco_dictionary_name = self.get_parameter("aruco_dictionary_name").get_parameter_value().string_value
+        # aruco_dictionary_name = config_marker["aruco_dictionary_name"]
+        # self.aruco_marker_side_length = self.get_parameter("aruco_marker_side_length").get_parameter_value().double_value
+        # self.camera_calibration_parameters_filename = self.get_parameter("camera_calibration_parameters_filename").get_parameter_value().string_value
+        # image_topic = self.get_parameter("image_topic").get_parameter_value().string_value
+        # self.aruco_marker_name = self.get_parameter("aruco_marker_name").get_parameter_value().string_value
 
         # Check that we have a valid ArUco marker
         if ARUCO_DICT.get(aruco_dictionary_name, None) is None:

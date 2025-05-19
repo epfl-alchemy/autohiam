@@ -23,7 +23,7 @@ class StartStateNode(Node):
 
         time.sleep(2)
 
-    def execute(self, positions: list, sec_from_start: int = 10):
+    def execute(self, positions: list, sec_from_start: int = 7):
         if len(positions) != 6:
             self.get_logger().error("Invalid number of joint positions.")
             return
@@ -73,7 +73,7 @@ def main(args: list = None) -> None:
         "joint_trajectory_executioner_node"
     )
 
-    start_pose = [0.0, 0.0, 0.0, 0.0, 0.244, 0.0]
+    start_pose = [0.0, 0.0, 0.0, 0.0, 0.344, 0.0]
 
     start_state_node.execute(start_pose)
 

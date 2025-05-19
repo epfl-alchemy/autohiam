@@ -10,12 +10,13 @@ import quaternion
 
 from piper_control.utils import quaternion_to_rotation_matrix, calculate_new_point
 
-class PickUpSample(Node):
+class PickUp(Node):
     def __init__(self):
-        super().__init__('pick_up_sample')
+        super().__init__('pick_up')
         self.declare_parameter('marker_id', 10)
+        # self.expected_id = 10
         self.expected_id = self.get_parameter('marker_id').get_parameter_value().integer_value
-        self.get_logger().info(f'Looking for marker ID: {self.expected_id}')
+        self.get_logger().info(f"Initializing '{self.get_name()}' node, expecting marker ID: {self.expected_id}")
         
         # Create the service client with an appropriate timeout
         self.cli = self.create_client(GenerateTrajectory, 'generate_trajectory')
@@ -23,7 +24,7 @@ class PickUpSample(Node):
         # Wait for the service to become available
         self.get_logger().info('Waiting for curobo trajectory generation and execution service...')
         while not self.cli.wait_for_service(timeout_sec=1.0):
-            self.get_logger().info('Service not available, waiting...')
+            self.get_logger().warn("curobo service is not available, retrying...")
         
         self.get_logger().info('Service is available, sending request')
 
@@ -33,10 +34,11 @@ class PickUpSample(Node):
             self.marker_listener_callback,
             10)
 
-        # self.expected_id = 10
-
         self.executed = False  # to ensure we only run once
         self.shutdown_requested = False  # Flag to track shutdown status
+
+        self.pose_buffer = []
+        self.buffer_size = 50 
 
 
     def marker_listener_callback(self, msg: MarkerPoseWithID):
@@ -51,17 +53,35 @@ class PickUpSample(Node):
             self.get_logger().info(f"Waiting for marker ID {self.expected_id}, but got {msg.id}.")
             return
 
-        self.get_logger().info(f"Marker {msg.id} detected.")
+        self.get_logger().info(f"Detected marker ID {msg.id} (expected: {self.expected_id}).")
 
-        self.get_logger().info("Going to pick up the holder...")
+
+        # Add the current pose to the buffer
+        self.pose_buffer.append(msg.marker_pose)
+
+        # Remove the oldest pose if the buffer is full
+        if len(self.pose_buffer) > self.buffer_size:
+            self.pose_buffer.pop(0)
+
+        # Check if the buffer is sufficiently populated
+        if len(self.pose_buffer) < self.buffer_size:
+            self.get_logger().info(f"Collecting more poses... ({len(self.pose_buffer)}/{self.buffer_size})")
+            self.get_logger().debug(
+                f"Pose buffer status: {len(self.pose_buffer)}/{self.buffer_size} (collecting more poses)"
+            )
+            return
+
+        # Average the poses
+        avg_pose = self.average_poses(self.pose_buffer)
+
         self.executed = True
 
         x, y, z, qw, qx, qy, qz = self.compute_target_pose(
-                msg.marker_pose,
-                distance=0.095,
+                avg_pose,
+                distance=0.120,
                 x_offset=0.0,
-                y_offset=-0.01,
-                z_offset=0.06 + 0.03
+                y_offset=0.0,
+                z_offset=0.08
         )
         goal_pose = Pose()
         goal_pose.position.x = x
@@ -72,6 +92,7 @@ class PickUpSample(Node):
         goal_pose.orientation.y = qy
         goal_pose.orientation.z = qz
 
+        self.get_logger().info(f"Sending trajectory request for marker ID {self.expected_id} with goal pose: x={x}, y={y}, z={z}")
         # Send the goal to trajectory planner
         self.send_trajectory_request(goal_pose)
 
@@ -108,6 +129,30 @@ class PickUpSample(Node):
 
         return x, y, z, qw, qx, qy, qz
 
+    def average_poses(self, poses):
+        # Average positions
+        positions = np.array([[p.position.x, p.position.y, p.position.z] for p in poses])
+        avg_position = np.mean(positions, axis=0)
+
+        # Average orientations using quaternion averaging
+        quaternions = np.array([
+            [p.orientation.w, p.orientation.x, p.orientation.y, p.orientation.z]
+            for p in poses
+        ])
+        avg_quat = np.mean(quaternions, axis=0)
+        avg_quat /= np.linalg.norm(avg_quat)  # Normalize
+
+        # Create a new Pose object
+        avg_pose = Pose()
+        avg_pose.position.x = avg_position[0]
+        avg_pose.position.y = avg_position[1]
+        avg_pose.position.z = avg_position[2]
+        avg_pose.orientation.w = avg_quat[0]
+        avg_pose.orientation.x = avg_quat[1]
+        avg_pose.orientation.y = avg_quat[2]
+        avg_pose.orientation.z = avg_quat[3]
+
+        return avg_pose
 
     def send_trajectory_request(self, pose: Pose):
         request = GenerateTrajectory.Request()
@@ -144,7 +189,7 @@ class PickUpSample(Node):
 
 def main():
     rclpy.init()
-    node = PickUpSample()
+    node = PickUp()
     
     executor = MultiThreadedExecutor()
     executor.add_node(node)

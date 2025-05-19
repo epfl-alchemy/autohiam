@@ -129,6 +129,8 @@ class ArucoNode(Node):
                 # Send the transform from marker to the camera
                 self.tfbroadcaster.sendTransform(t_marker_to_camera)
 
+        cv2.namedWindow("camera", cv2.WINDOW_NORMAL)
+        cv2.resizeWindow("camera", 800, 600)
         cv2.imshow("camera", current_frame)
         key = cv2.waitKey(1)
         if key == ord('q'):

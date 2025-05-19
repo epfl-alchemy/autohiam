@@ -9,59 +9,60 @@ all_procs = []
 # === Robochemist workspace commands ===
 cmd_open_gripper = "cd ~/autohiam_ws && source install/setup.bash && ros2 run robochemist open_gripper"
 cmd_close_gripper = "cd ~/autohiam_ws && source install/setup.bash && ros2 run robochemist close_gripper"
-cmd_zero_position = "cd ~/autohiam_ws && source install/setup.bash && ros2 run robochemist zero"
 cmd_zero_gripper = "cd ~/autohiam_ws && source install/setup.bash && ros2 run robochemist zero_gripper"
-cmd_start_position = "cd ~/autohiam_ws && source install/setup.bash && ros2 run robochemist start_position"
-cmd_drying_position = "cd ~/autohiam_ws && source install/setup.bash && ros2 run robochemist drying_position"
+
+cmd_disable_pose = "cd ~/autohiam_ws && source install/setup.bash && ros2 run robochemist disable_pose"
+cmd_start_pose = "cd ~/autohiam_ws && source install/setup.bash && ros2 run robochemist start_pose"
+
+cmd_shaking = "cd ~/autohiam_ws && source install/setup.bash && ros2 run robochemist shaking"
+
 cmd_pickup_container = (
     "source ~/directory_env/curobo_env/bin/activate && "
     "cd ~/autohiam_ws && source install/setup.bash && "
     "ros2 run robochemist pickup"
-)
-cmd_pickup_ammonia_cover = (
-    "source ~/directory_env/curobo_env/bin/activate && "
-    "cd ~/autohiam_ws && source install/setup.bash && "
-    "ros2 run robochemist pickup --ros-args -p marker_id:=19"
 )
 cmd_pickup_iron_cover = (
     "source ~/directory_env/curobo_env/bin/activate && "
     "cd ~/autohiam_ws && source install/setup.bash && "
     "ros2 run robochemist pickup --ros-args -p marker_id:=23"
 )
+
 cmd_cartesian_move_down = (
     "source ~/directory_env/curobo_env/bin/activate && "
     "cd ~/autohiam_ws && source install/setup.bash && "
     "ros2 run robochemist cartesian_control_moveit --ros-args -p z_offset:=-0.07"
 )
-cmd_cartesian_move_down_iron_cover = (
+cmd_cartesian_move_down_more = (
     "source ~/directory_env/curobo_env/bin/activate && "
     "cd ~/autohiam_ws && source install/setup.bash && "
-    "ros2 run robochemist cartesian_control_moveit --ros-args -p z_offset:=-0.085"
+    "ros2 run robochemist cartesian_control_moveit --ros-args -p z_offset:=-0.09"
 )
-cmd_cartesian_move_down_ammonia = (
-    "source ~/directory_env/curobo_env/bin/activate && "
-    "cd ~/autohiam_ws && source install/setup.bash && "
-    "ros2 run robochemist cartesian_control_moveit --ros-args -p z_offset:=-0.085"
-)
+
 cmd_cartesian_move_up = (
     "source ~/directory_env/curobo_env/bin/activate && "
     "cd ~/autohiam_ws && source install/setup.bash && "
     "ros2 run robochemist cartesian_control_moveit --ros-args -p z_offset:=0.10"
 )
-cmd_move_to_ammonia = (
-    "source ~/directory_env/curobo_env/bin/activate && "
-    "cd ~/autohiam_ws && source install/setup.bash && "
-    "ros2 run robochemist beaker --ros-args -p marker_id:=100"
-)
+
 cmd_move_to_heater = (
     "source ~/directory_env/curobo_env/bin/activate && "
     "cd ~/autohiam_ws && source install/setup.bash && "
     "ros2 run robochemist heater"
 )
+cmd_move_to_ammonia = (
+    "source ~/directory_env/curobo_env/bin/activate && "
+    "cd ~/autohiam_ws && source install/setup.bash && "
+    "ros2 run robochemist moveto"
+)
+cmd_move_to_water = (
+    "source ~/directory_env/curobo_env/bin/activate && "
+    "cd ~/autohiam_ws && source install/setup.bash && "
+    "ros2 run robochemist moveto --ros-args -p y:=0.103"
+)
 cmd_move_to_cover_base = (
     "source ~/directory_env/curobo_env/bin/activate && "
     "cd ~/autohiam_ws && source install/setup.bash && "
-    "ros2 run robochemist cover_base"
+    "ros2 run robochemist moveto --ros-args -p y:=0.000"
 )
 
 # === Cumotion (control logic) ===
@@ -75,7 +76,7 @@ cmd_run_cumotion = (
 cmd_can_activate = "cd ~/piper_ros_ws/src/piper_ros && bash can_activate.sh can0 1000000"
 cmd_realsense_node = (
     "ros2 run realsense2_camera realsense2_camera_node "
-    "--ros-args -p enable_color:=true -p rgb_camera.color_profile:=1280x720x30"
+    "--ros-args -p enable_color:=true -p rgb_camera.color_profile:=1920x1080x30"
 )
 cmd_marker_detection = (
     "source ~/directory_env/handeye_env/bin/activate && "
@@ -90,7 +91,7 @@ cmd_enable_robot = (
     "ros2 launch piper start_single_piper.launch.py gripper_val_mutiple:=2"
 )
 cmd_send_enable_command = (
-    "ros2 topic pub -r 150 /enable_flag std_msgs/msg/Bool '{data: true}'"
+    "ros2 topic pub -r 100 /enable_flag std_msgs/msg/Bool '{data: true}'"
 )
 cmd_send_disable_command = (
     "ros2 topic pub -r 50 /enable_flag std_msgs/msg/Bool '{data: false}'"
@@ -106,13 +107,6 @@ def wait_seconds(seconds, message=""):
         sys.stdout.write(f"{message}\r{i} seconds remaining... ")
         sys.stdout.flush()
         time.sleep(1)
-
-def keep_enable_flag(seconds=5, state=True):
-    cmd = f"ros2 topic pub -r 50 /enable_flag std_msgs/msg/Bool '{{data: {str(state).lower()}}}'"
-    proc = subprocess.Popen(cmd, shell=True, executable="/bin/bash", stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, preexec_fn=os.setsid)
-    time.sleep(seconds)
-    proc.terminate()
-    proc.wait()
 
 def keep_disable_flag(seconds=5, state=False):
     cmd = f"ros2 topic pub -r 50 /enable_flag std_msgs/msg/Bool '{{data: {str(state).lower()}}}'"
@@ -140,8 +134,8 @@ def cleanup():
         print("Moving up...")
         subprocess.run(cmd_cartesian_move_up, shell=True, executable="/bin/bash", check=True)
 
-        print("Going to zero position...")
-        subprocess.run(cmd_zero_position, shell=True, executable="/bin/bash", check=True)
+        print("Going to disable pose...")
+        subprocess.run(cmd_disable_pose, shell=True, executable="/bin/bash", check=True)
 
         print("Closing the gripper to zero...")
         subprocess.run(cmd_zero_gripper, shell=True, executable="/bin/bash", check=True)
@@ -198,8 +192,8 @@ def initialization():
     robot_control_node = subprocess.Popen(cmd_enable_robot, shell=True, executable="/bin/bash", stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, preexec_fn=os.setsid) #Run the commands in an interactive shell
     all_procs.append(robot_control_node)
     wait_seconds(5, "waiting")
-    send_enable_node = subprocess.Popen(cmd_send_enable_command, shell=True, executable="/bin/bash", stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, preexec_fn=os.setsid) #Run the commands in an interactive shell
-    all_procs.append(send_enable_node)
+    # send_enable_node = subprocess.Popen(cmd_send_enable_command, shell=True, executable="/bin/bash", stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, preexec_fn=os.setsid) #Run the commands in an interactive shell
+    # all_procs.append(send_enable_node)
     print("robot control node has started.")
 
     moveit_node = subprocess.Popen(cmd_launch_moveit, shell=True, executable="/bin/bash", stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, preexec_fn=os.setsid)
@@ -215,41 +209,11 @@ def initialization():
 def precipitation():
     print("=== Step 2: Precipitation ===")
 
-    print("Moving to start position...")
-    subprocess.run(cmd_start_position, shell=True, executable="/bin/bash", check=True)
+    print("Moving to start pose...")
+    subprocess.run(cmd_start_pose, shell=True, executable="/bin/bash", check=True)
 
     print("Opening the gripper...")
     subprocess.run(cmd_open_gripper, shell=True, executable="/bin/bash", check=True)
-
-    # print("Picking up the ammonia cover...")
-    # subprocess.run(cmd_pickup_ammonia_cover, shell=True, executable="/bin/bash", check=True)
-
-    # print("Moving down...")
-    # subprocess.run(cmd_cartesian_move_down, shell=True, executable="/bin/bash", check=True)
-
-    # print("Closing the gripper...")
-    # subprocess.run(cmd_close_gripper, shell=True, executable="/bin/bash", check=True)
-
-    # print("Moving up...")
-    # subprocess.run(cmd_cartesian_move_up, shell=True, executable="/bin/bash", check=True)
-
-    # print("Going back to start position...")
-    # subprocess.run(cmd_start_position, shell=True, executable="/bin/bash", check=True)
-
-    # print("Moving the cover back to the base...")
-    # subprocess.run(cmd_move_to_cover_base, shell=True, executable="/bin/bash", check=True)
-
-    # print("Moving down...")
-    # subprocess.run(cmd_cartesian_move_down, shell=True, executable="/bin/bash", check=True)
-
-    # print("Opening the gripper...")
-    # subprocess.run(cmd_open_gripper, shell=True, executable="/bin/bash", check=True)
-
-    # print("Moving up...")
-    # subprocess.run(cmd_cartesian_move_up, shell=True, executable="/bin/bash", check=True)
-
-    # print("Going back to start position...")
-    # subprocess.run(cmd_start_position, shell=True, executable="/bin/bash", check=True)
 
     print("Picking up the sample...")
     subprocess.run(cmd_pickup_container, shell=True, executable="/bin/bash", check=True)
@@ -263,19 +227,22 @@ def precipitation():
     print("Moving up...")
     subprocess.run(cmd_cartesian_move_up, shell=True, executable="/bin/bash", check=True)
 
-    print("Going to drying position...")
-    subprocess.run(cmd_drying_position, shell=True, executable="/bin/bash", check=True)
+    print("Shaking...")
+    subprocess.run(cmd_shaking, shell=True, executable="/bin/bash", check=True)
+
+    print("Moving to start pose to dry...")
+    subprocess.run(cmd_start_pose, shell=True, executable="/bin/bash", check=True)
+
+    print("Shaking...")
+    subprocess.run(cmd_shaking, shell=True, executable="/bin/bash", check=True)
 
     wait_seconds(5, "waiting to dry")
-
-    print("Going back to start position...")
-    subprocess.run(cmd_start_position, shell=True, executable="/bin/bash", check=True)
 
     print("Moving the sample to ammonia solution...")
     subprocess.run(cmd_move_to_ammonia, shell=True, executable="/bin/bash", check=True)
 
     print("Moving down...")
-    subprocess.run(cmd_cartesian_move_down_ammonia, shell=True, executable="/bin/bash", check=True)
+    subprocess.run(cmd_cartesian_move_down_more, shell=True, executable="/bin/bash", check=True)
 
     print("Opening the gripper...")
     subprocess.run(cmd_open_gripper, shell=True, executable="/bin/bash", check=True)
@@ -284,7 +251,7 @@ def precipitation():
     subprocess.run(cmd_cartesian_move_up, shell=True, executable="/bin/bash", check=True)
 
     print("Going back to start position...")
-    subprocess.run(cmd_start_position, shell=True, executable="/bin/bash", check=True)
+    subprocess.run(cmd_start_pose, shell=True, executable="/bin/bash", check=True)
 
     print("Picking up the iron cover...")
     subprocess.run(cmd_pickup_iron_cover, shell=True, executable="/bin/bash", check=True)
@@ -299,22 +266,13 @@ def precipitation():
     subprocess.run(cmd_cartesian_move_up, shell=True, executable="/bin/bash", check=True)
 
     print("Going back to start position...")
-    subprocess.run(cmd_start_position, shell=True, executable="/bin/bash", check=True)
+    subprocess.run(cmd_start_pose, shell=True, executable="/bin/bash", check=True)
 
     print("Moving into the heater...")
     subprocess.run(cmd_move_to_heater, shell=True, executable="/bin/bash", check=True)
 
     print("Moving straight down...")
-    subprocess.run(cmd_cartesian_move_down_iron_cover, shell=True, executable="/bin/bash", check=True)
-
-    print("Opening the gripper...")
-    subprocess.run(cmd_open_gripper, shell=True, executable="/bin/bash", check=True)
-
-    print("Moving up...")
-    subprocess.run(cmd_cartesian_move_up, shell=True, executable="/bin/bash", check=True)
-
-    print("Moving to start position...")
-    subprocess.run(cmd_start_position, shell=True, executable="/bin/bash", check=True)
+    subprocess.run(cmd_cartesian_move_down_more, shell=True, executable="/bin/bash", check=True)
 
 
 if __name__ == "__main__":

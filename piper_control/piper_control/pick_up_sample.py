@@ -38,30 +38,40 @@ class PickUpSample(Node):
         self.executed = False  # to ensure we only run once
         self.shutdown_requested = False  # Flag to track shutdown status
 
+        self.pose_buffer = []
+        self.buffer_size = 50 
 
     def marker_listener_callback(self, msg: MarkerPoseWithID):
         if self.executed or self.shutdown_requested:
-           return
-
-        if self.expected_id is None:
-            self.get_logger().info("All steps completed.")
             return
 
-        if msg.id != self.expected_id:
+        if self.expected_id is None or msg.id != self.expected_id:
             self.get_logger().info(f"Waiting for marker ID {self.expected_id}, but got {msg.id}.")
             return
 
-        self.get_logger().info(f"Marker {msg.id} detected.")
+        # Add the current pose to the buffer
+        self.pose_buffer.append(msg.marker_pose)
 
-        self.get_logger().info("Going to pick up the holder...")
+        # Remove the oldest pose if the buffer is full
+        if len(self.pose_buffer) > self.buffer_size:
+            self.pose_buffer.pop(0)
+
+        # Check if the buffer is sufficiently populated
+        if len(self.pose_buffer) < self.buffer_size:
+            self.get_logger().info(f"Collecting more poses... ({len(self.pose_buffer)}/{self.buffer_size})")
+            return
+
+        # Average the poses
+        avg_pose = self.average_poses(self.pose_buffer)
         self.executed = True
 
+        # Compute the target pose
         x, y, z, qw, qx, qy, qz = self.compute_target_pose(
-                msg.marker_pose,
-                distance=0.095,
-                x_offset=0.0,
-                y_offset=-0.01,
-                z_offset=0.06 + 0.03
+            avg_pose,
+            distance=0.150,
+            x_offset=0.0,
+            y_offset=0.0,
+            z_offset=0.0
         )
         goal_pose = Pose()
         goal_pose.position.x = x
@@ -71,8 +81,8 @@ class PickUpSample(Node):
         goal_pose.orientation.x = qx
         goal_pose.orientation.y = qy
         goal_pose.orientation.z = qz
-
-        # Send the goal to trajectory planner
+        
+        self.get_logger().info(f"Moving to x = {x}, y = {y}, z = {z}")
         self.send_trajectory_request(goal_pose)
 
     def compute_target_pose(
@@ -101,12 +111,37 @@ class PickUpSample(Node):
         y = round(y_new + y_offset, 4)
         z = round(z_new + z_offset, 4)
 
-        qw = result_quat[3]
-        qx = result_quat[0]
-        qy = result_quat[1]
-        qz = result_quat[2]
+        qw = round(result_quat[3], 4)
+        qx = round(result_quat[0], 4)
+        qy = round(result_quat[1], 4)
+        qz = round(result_quat[2], 4)
 
         return x, y, z, qw, qx, qy, qz
+
+    def average_poses(self, poses):
+        # Average positions
+        positions = np.array([[p.position.x, p.position.y, p.position.z] for p in poses])
+        avg_position = np.mean(positions, axis=0)
+
+        # Average orientations using quaternion averaging
+        quaternions = np.array([
+            [p.orientation.w, p.orientation.x, p.orientation.y, p.orientation.z]
+            for p in poses
+        ])
+        avg_quat = np.mean(quaternions, axis=0)
+        avg_quat /= np.linalg.norm(avg_quat)  # Normalize
+
+        # Create a new Pose object
+        avg_pose = Pose()
+        avg_pose.position.x = avg_position[0]
+        avg_pose.position.y = avg_position[1]
+        avg_pose.position.z = avg_position[2]
+        avg_pose.orientation.w = avg_quat[0]
+        avg_pose.orientation.x = avg_quat[1]
+        avg_pose.orientation.y = avg_quat[2]
+        avg_pose.orientation.z = avg_quat[3]
+
+        return avg_pose
 
 
     def send_trajectory_request(self, pose: Pose):
