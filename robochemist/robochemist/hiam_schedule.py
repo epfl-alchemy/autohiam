@@ -10,10 +10,10 @@ import sys
 #     ("/home/szhuang/autohiam_ws/src/robochemist/robochemist/hiam_transition_schedule.py", 6 * 60),
 # ]
 scripts = [
-    ("/home/szhuang/autohiam_ws/src/robochemist/robochemist/hiam_infusion_schedule.py", 10),
-    ("/home/szhuang/autohiam_ws/src/robochemist/robochemist/hiam_precipitation_schedule.py", 10),
-    ("/home/szhuang/autohiam_ws/src/robochemist/robochemist/hiam_washing_schedule.py", 10),
-    ("/home/szhuang/autohiam_ws/src/robochemist/robochemist/hiam_transition_schedule.py", 10),
+    ("/home/szhuang/autohiam_ws/src/robochemist/robochemist/hiam_infusion_schedule.py", 5*60),
+    ("/home/szhuang/autohiam_ws/src/robochemist/robochemist/hiam_precipitation_schedule.py", 5*60),
+    ("/home/szhuang/autohiam_ws/src/robochemist/robochemist/hiam_washing_schedule.py", 5*60),
+    ("/home/szhuang/autohiam_ws/src/robochemist/robochemist/hiam_transition_schedule.py", 5*60),
 ]
 
 

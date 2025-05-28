@@ -67,7 +67,7 @@ cmd_move_to_cover_base = (
 cmd_move_to_bigger_beaker = (
     "source ~/directory_env/curobo_env/bin/activate && "
     "cd ~/autohiam_ws && source install/setup.bash && "
-    "ros2 run robochemist moveto --ros-args -p y:=0.1280 -p x:=0.440 -p z:=0.276"
+    "ros2 run robochemist moveto --ros-args -p y:=0.1250 -p x:=0.440 -p z:=0.276"
 )
 
 # === Cumotion (control logic) ===

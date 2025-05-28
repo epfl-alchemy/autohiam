@@ -1,13 +1,14 @@
 #cuRobo
 import torch
 from curobo.geom.sdf.world import CollisionCheckerType
-from curobo.geom.types import Cuboid, WorldConfig
+from curobo.geom.types import WorldConfig, Cuboid, Mesh, Capsule, Cylinder, Sphere
 from curobo.types.base import TensorDeviceType
 from curobo.types.math import Pose as cuPose
 from curobo.types.robot import JointState as cuJointState
 from curobo.util.logger import setup_curobo_logger
 from curobo.util_file import get_robot_configs_path, get_world_configs_path, join_path, load_yaml
 from curobo.wrap.reacher.motion_gen import MotionGen, MotionGenConfig, MotionGenPlanConfig
+from curobo.util.usd_helper import UsdHelper
 
 #ros2
 import rclpy
@@ -25,6 +26,8 @@ import itertools
 from array import array
 from concurrent.futures import Future
 import time
+from datetime import datetime
+import os
 
 from rclpy.callback_groups import MutuallyExclusiveCallbackGroup
 
@@ -38,6 +41,7 @@ class cuRoboGenService(Node):
         self.declare_parameter('collision_cache_mesh', 20)
         self.declare_parameter('collision_cache_cuboid', 20)
         self.declare_parameter('pose_change_threshold', 0.01)
+        self.declare_parameter('usd', False)
         
         self.create_subscription(JointState, '/joint_states', self.joint_state_callback, 10)
         
@@ -73,8 +77,8 @@ class cuRoboGenService(Node):
         }
         
     def curobo_warmup(self):
-        robot_file = self.get_parameter('robot').get_parameter_value().string_value
-        if robot_file == '':
+        self.robot_file = self.get_parameter('robot').get_parameter_value().string_value
+        if self.robot_file == '':
             self.get_logger().fatal('Received empty robot file.')
             raise SystemExit        
         collision_cache_cuboid = (
@@ -101,7 +105,7 @@ class cuRoboGenService(Node):
         )
         
         motion_gen_cfg = MotionGenConfig.load_from_robot_config(
-            robot_file,
+            self.robot_file,
             world_file,
             tensor_args,
             interpolation_dt=interpolation_dt,
@@ -119,16 +123,28 @@ class cuRoboGenService(Node):
         self.get_logger().info('cuRobo is ready for planning queries!')
 
     def update_world_objects(self):
-        #world_update_status = True
         self.get_logger().info("Updating world objects.")
         cuboid_list = [
-            #Cuboid(name="obs_1", pose=[0.5, 0, 0.275, 1, 0, 0, 0], dims=[0.20, 0.27, 0.55]),
-            #Cuboid(name="obs_2", pose=[0.5, 0, 0.25, 1, 0, 0, 0], dims=[0.1, 0.1, 0.5]),
-            #Cuboid(name="obs_3", pose=[0.3, 0.3, 0.25, 1, 0, 0, 0], dims=[0.1, 0.1, 0.5]),
-            #Cuboid(name="obs_4", pose=[0, 0.5, 0.25, 1, 0, 0, 0], dims=[0.1, 0.1, 0.5])
+            # Cuboid(name="obs_1", pose=[0.5, 0, 0.275, 1, 0, 0, 0], dims=[0.20, 0.27, 0.55]),
+            # Cuboid(name="obs_2", pose=[0.5, 0, 0.25, 1, 0, 0, 0], dims=[0.1, 0.1, 0.5]),
+            # Cuboid(name="obs_3", pose=[0.3, 0.3, 0.25, 1, 0, 0, 0], dims=[0.1, 0.1, 0.5]),
+            # Cuboid(name="obs_4", pose=[0, 0.5, 0.25, 1, 0, 0, 0], dims=[0.1, 0.1, 0.5])
         ]
         sphere_list = []
-        cylinder_list = []
+        cylinder_list = [
+            # Cylinder(
+            #     name="cylinder_1",
+            #     radius=0.01875,
+            #     height=0.1,
+            #     pose=[0.4625, 0.1125, 0.05, 1, 0, 0, 0]
+            #     ),
+            # Cylinder(
+            #     name="cylinder_2",
+            #     radius=0.01875,
+            #     height=0.1,
+            #     pose=[0.4625, 0.1875, 0.05, 1, 0, 0, 0]
+            #     ),
+        ]
         mesh_list = []
         
         self.world_model = WorldConfig(
@@ -224,6 +240,47 @@ class cuRoboGenService(Node):
                 accelerations = plan_data.acceleration.cpu().numpy().tolist()
                 dt = plan.optimized_dt.item()
                 
+                # write usd animation
+                usd_value = self.get_parameter('usd').get_parameter_value().bool_value
+                if usd_value:
+                    interpolated_solution = plan.get_interpolated_plan()
+                    if interpolated_solution is None:
+                        self.get_logger().error("interpolated_solution is None")
+                    else:
+                        try:
+                            self.get_logger().info(f"interpolated_solution has position: {hasattr(interpolated_solution, 'position')}")
+                            self.get_logger().info(f"position shape: {interpolated_solution.position.shape}")
+                            self.get_logger().info(f"velocity shape: {interpolated_solution.velocity.shape}")
+                            self.get_logger().info(f"acceleration shape: {interpolated_solution.acceleration.shape}")
+                        except Exception as e:
+                            self.get_logger().error(f"Error inspecting interpolated_solution: {e}")
+
+                        try:
+                            save_dir = "/home/szhuang/robochemist_output/usd_animation"
+                            os.makedirs(save_dir, exist_ok=True)
+                            timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+                            filename = f"trajectory_{timestamp}.usd"
+                            save_path = os.path.join(save_dir, filename)
+
+                            self.get_logger().info(f"Saving USD to: {save_path}")
+
+                            robot_yaml = self.get_parameter('robot').get_parameter_value().string_value
+                            robot_config_path = os.path.join(get_robot_configs_path(), robot_yaml)
+                            robot_cfg = load_yaml(robot_config_path)
+                            robot_usd = robot_cfg["robot_cfg"]["kinematics"]["usd_path"]
+
+                            UsdHelper.write_trajectory_animation_with_robot_usd(
+                                robot_usd,
+                                self.world_model,
+                                start_state,
+                                interpolated_solution,
+                                dt=plan.interpolation_dt,
+                                save_path=save_path,
+                            )
+                        except Exception as e:
+                            self.get_logger().error(f"Error writing USD: {e}")
+
+
 
                 response.trajectory_positions = list(itertools.chain.from_iterable(positions))
                 response.trajectory_velocities = list(itertools.chain.from_iterable(velocities))

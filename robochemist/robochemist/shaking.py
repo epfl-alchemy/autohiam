@@ -29,6 +29,8 @@ class ShakingNode(Node):
             self.get_logger().info("Waiting for action server to become available...")
         self.get_logger().info("Action server available.")
 
+        time.sleep(2)
+
         # Shaking parameters
         self.amplitude = 0.07  # 7 cm shaking amplitude (in radians)
         self.frequency = 2.0   # 2 Hz shaking

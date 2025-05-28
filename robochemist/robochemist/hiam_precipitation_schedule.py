@@ -227,8 +227,8 @@ def precipitation():
     print("Moving up...")
     subprocess.run(cmd_cartesian_move_up, shell=True, executable="/bin/bash", check=True)
 
-    print("Shaking...")
-    subprocess.run(cmd_shaking, shell=True, executable="/bin/bash", check=True)
+    # print("Shaking...")
+    # subprocess.run(cmd_shaking, shell=True, executable="/bin/bash", check=True)
 
     print("Moving to start pose to dry...")
     subprocess.run(cmd_start_pose, shell=True, executable="/bin/bash", check=True)

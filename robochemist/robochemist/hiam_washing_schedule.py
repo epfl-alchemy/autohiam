@@ -57,7 +57,7 @@ cmd_move_to_ammonia = (
 cmd_move_to_water = (
     "source ~/directory_env/curobo_env/bin/activate && "
     "cd ~/autohiam_ws && source install/setup.bash && "
-    "ros2 run robochemist moveto --ros-args -p y:=0.103"
+    "ros2 run robochemist moveto --ros-args -p y:=0.100"
 )
 cmd_move_to_cover_base = (
     "source ~/directory_env/curobo_env/bin/activate && "

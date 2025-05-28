@@ -81,7 +81,7 @@ class PickUp(Node):
                 distance=0.120,
                 x_offset=0.0,
                 y_offset=0.0,
-                z_offset=0.08
+                z_offset=0.06
         )
         goal_pose = Pose()
         goal_pose.position.x = x

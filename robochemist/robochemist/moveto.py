@@ -9,7 +9,7 @@ class TrajectoryClient(Node):
         super().__init__('trajectory_client')
         
         self.declare_parameter('x', 0.325)
-        self.declare_parameter('y', 0.181)
+        self.declare_parameter('y', 0.175)
         self.declare_parameter('z', 0.266)
 
         self.x = self.get_parameter('x').get_parameter_value().double_value
