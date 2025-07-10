@@ -1,0 +1,541 @@
+# The configurations that used for the recording, feel free to edit them
+config:
+
+  # Specify a command to be executed
+  # like `/bin/bash -l`, `ls`, or any other commands
+  # the default is bash for Linux
+  # or powershell.exe for Windows
+  command: bash -l
+  
+  # Specify the current working directory path
+  # the default is the current working directory path
+  cwd: /home/szhuang/autohiam_ws
+  
+  # Export additional ENV variables
+  env:
+    recording: true
+  
+  # Explicitly set the number of columns
+  # or use `auto` to take the current
+  # number of columns of your shell
+  cols: 114
+  
+  # Explicitly set the number of rows
+  # or use `auto` to take the current
+  # number of rows of your shell
+  rows: 35
+  
+  # Amount of times to repeat GIF
+  # If value is -1, play once
+  # If value is 0, loop indefinitely
+  # If value is a positive number, loop n times
+  repeat: 0
+  
+  # Quality
+  # 1 - 100
+  quality: 100
+  
+  # Delay between frames in ms
+  # If the value is `auto` use the actual recording delays
+  frameDelay: auto
+  
+  # Maximum delay between frames in ms
+  # Ignored if the `frameDelay` isn't set to `auto`
+  # Set to `auto` to prevent limiting the max idle time
+  maxIdleTime: 2000
+  
+  # The surrounding frame box
+  # The `type` can be null, window, floating, or solid`
+  # To hide the title use the value null
+  # Don't forget to add a backgroundColor style with a null as type
+  frameBox:
+    type: floating
+    title: Terminalizer
+    style:
+      border: 0px black solid
+      # boxShadow: none
+      # margin: 0px
+  
+  # Add a watermark image to the rendered gif
+  # You need to specify an absolute path for
+  # the image on your machine or a URL, and you can also
+  # add your own CSS styles
+  watermark:
+    imagePath: null
+    style:
+      position: absolute
+      right: 15px
+      bottom: 15px
+      width: 100px
+      opacity: 0.9
+  
+  # Cursor style can be one of
+  # `block`, `underline`, or `bar`
+  cursorStyle: block
+  
+  # Font family
+  # You can use any font that is installed on your machine
+  # in CSS-like syntax
+  fontFamily: "Monaco, Lucida Console, Ubuntu Mono, Monospace"
+  
+  # The size of the font
+  fontSize: 12
+  
+  # The height of lines
+  lineHeight: 1
+  
+  # The spacing between letters
+  letterSpacing: 0
+  
+  # Theme
+  theme:
+    background: "transparent"
+    foreground: "#afafaf"
+    cursor: "#c7c7c7"
+    black: "#232628"
+    red: "#fc4384"
+    green: "#b3e33b"
+    yellow: "#ffa727"
+    blue: "#75dff2"
+    magenta: "#ae89fe"
+    cyan: "#708387"
+    white: "#d5d5d0"
+    brightBlack: "#626566"
+    brightRed: "#ff7fac"
+    brightGreen: "#c8ed71"
+    brightYellow: "#ebdf86"
+    brightBlue: "#75dff2"
+    brightMagenta: "#ae89fe"
+    brightCyan: "#b1c6ca"
+    brightWhite: "#f9f9f4"
+  
+# Records, feel free to edit them
+records:
+  - delay: 350
+    content: "\e]0;szhuang@alchemy:~/autohiam_ws\e\\"
+  - delay: 16
+    content: "\e]7;file://alchemy/home/szhuang/autohiam_ws\e\\\e[?2004h\e]0;szhuang@alchemy: ~/autohiam_ws\a\e[01;32mszhuang@alchemy\e[00m:\e[01;34m~/autohiam_ws\e[00m$ "
+  - delay: 2375
+    content: c
+  - delay: 214
+    content: l
+  - delay: 240
+    content: e
+  - delay: 109
+    content: a
+  - delay: 71
+    content: r
+  - delay: 483
+    content: "\r\n\e[?2004l\r"
+  - delay: 5
+    content: "\e[H\e[2J\e[3J\e]0;szhuang@alchemy:~/autohiam_ws\e\\"
+  - delay: 6
+    content: "\e]7;file://alchemy/home/szhuang/autohiam_ws\e\\\e[?2004h\e]0;szhuang@alchemy: ~/autohiam_ws\a\e[01;32mszhuang@alchemy\e[00m:\e[01;34m~/autohiam_ws\e[00m$ "
+  - delay: 3532
+    content: s
+  - delay: 142
+    content: o
+  - delay: 77
+    content: u
+  - delay: 129
+    content: r
+  - delay: 721
+    content: c
+  - delay: 80
+    content: e
+  - delay: 232
+    content: ' '
+  - delay: 188
+    content: i
+  - delay: 87
+    content: 'n'
+  - delay: 41
+    content: s
+  - delay: 99
+    content: t
+  - delay: 75
+    content: a
+  - delay: 110
+    content: l
+  - delay: 142
+    content: l
+  - delay: 227
+    content: /
+  - delay: 174
+    content: s
+  - delay: 203
+    content: e
+  - delay: 46
+    content: t
+  - delay: 73
+    content: u
+  - delay: 78
+    content: p
+  - delay: 279
+    content: .
+  - delay: 242
+    content: b
+  - delay: 152
+    content: a
+  - delay: 49
+    content: s
+  - delay: 106
+    content: h
+  - delay: 61
+    content: "\r\n\e[?2004l\r"
+  - delay: 160
+    content: "\e]0;szhuang@alchemy:~/autohiam_ws\e\\\e]7;file://alchemy/home/szhuang/autohiam_ws\e\\\e[?2004h\e]0;szhuang@alchemy: ~/autohiam_ws\a\e[01;32mszhuang@alchemy\e[00m:\e[01;34m~/autohiam_ws\e[00m$ "
+  - delay: 9259
+    content: r
+  - delay: 202
+    content: o
+  - delay: 93
+    content: s
+  - delay: 238
+    content: '2'
+  - delay: 242
+    content: ' '
+  - delay: 133
+    content: s
+  - delay: 273
+    content: e
+  - delay: 95
+    content: r
+  - delay: 730
+    content: c
+  - delay: 229
+    content: i
+  - delay: 182
+    content: v
+  - delay: 89
+    content: e
+  - delay: 347
+    content: "\b\e[K"
+  - delay: 185
+    content: "\b\e[K"
+  - delay: 159
+    content: "\b\e[K"
+  - delay: 181
+    content: "\b\e[K"
+  - delay: 1241
+    content: v
+  - delay: 143
+    content: i
+  - delay: 175
+    content: c
+  - delay: 133
+    content: e
+  - delay: 212
+    content: ' '
+  - delay: 124
+    content: c
+  - delay: 55
+    content: a
+  - delay: 246
+    content: l
+  - delay: 135
+    content: l
+  - delay: 550
+    content: ' '
+  - delay: 297
+    content: /
+  - delay: 547
+    content: u
+  - delay: 142
+    content: p
+  - delay: 264
+    content: d
+  - delay: 113
+    content: a
+  - delay: 302
+    content: t
+  - delay: 102
+    content: e
+  - delay: 421
+    content: _
+  - delay: 336
+    content: o
+  - delay: 151
+    content: b
+  - delay: 181
+    content: s
+  - delay: 185
+    content: t
+  - delay: 112
+    content: a
+  - delay: 209
+    content: c
+  - delay: 123
+    content: l
+  - delay: 154
+    content: e
+  - delay: 267
+    content: s
+  - delay: 254
+    content: ' '
+  - delay: 130
+    content: c
+  - delay: 150
+    content: u
+  - delay: 156
+    content: r
+  - delay: 145
+    content: o
+  - delay: 286
+    content: b
+  - delay: 122
+    content: o
+  - delay: 885
+    content: _
+  - delay: 264
+    content: r
+  - delay: 103
+    content: o
+  - delay: 194
+    content: s
+  - delay: 384
+    content: '2'
+  - delay: 755
+    content: /
+  - delay: 172
+    content: s
+  - delay: 205
+    content: r
+  - delay: 686
+    content: v
+  - delay: 779
+    content: /
+  - delay: 554
+    content: U
+  - delay: 237
+    content: p
+  - delay: 167
+    content: d
+  - delay: 110
+    content: a
+  - delay: 259
+    content: t
+  - delay: 108
+    content: e
+  - delay: 224
+    content: O
+  - delay: 273
+    content: b
+  - delay: 128
+    content: s
+  - delay: 139
+    content: t
+  - delay: 110
+    content: a
+  - delay: 217
+    content: c
+  - delay: 120
+    content: l
+  - delay: 128
+    content: e
+  - delay: 322
+    content: ' '
+  - delay: 431
+    content: ''''
+  - delay: 1555
+    content: '{'
+  - delay: 5193
+    content: 'n'
+  - delay: 151
+    content: a
+  - delay: 188
+    content: m
+  - delay: 173
+    content: e
+  - delay: 398
+    content: s
+  - delay: 1004
+    content: ':'
+  - delay: 990
+    content: ' '
+  - delay: 256
+    content: '['
+  - delay: 1101
+    content: '}'
+  - delay: 906
+    content: "\b\e[K"
+  - delay: 2032
+    content: '"'
+  - delay: 406
+    content: o
+  - delay: 457
+    content: b
+  - delay: 138
+    content: s
+  - delay: 761
+    content: _
+  - delay: 280
+    content: "1 \r"
+  - delay: 918
+    content: '"'
+  - delay: 1541
+    content: ']'
+  - delay: 853
+    content: ','
+  - delay: 202
+    content: ' '
+  - delay: 115
+    content: p
+  - delay: 98
+    content: o
+  - delay: 127
+    content: s
+  - delay: 163
+    content: e
+  - delay: 271
+    content: s
+  - delay: 702
+    content: ':'
+  - delay: 419
+    content: ' '
+  - delay: 495
+    content: '['
+  - delay: 618
+    content: '0'
+  - delay: 397
+    content: .
+  - delay: 914
+    content: '3'
+  - delay: 211
+    content: '5'
+  - delay: 1468
+    content: ','
+  - delay: 376
+    content: ' '
+  - delay: 221
+    content: '0'
+  - delay: 324
+    content: .
+  - delay: 204
+    content: '0'
+  - delay: 963
+    content: ','
+  - delay: 332
+    content: ' '
+  - delay: 294
+    content: '0'
+  - delay: 336
+    content: .
+  - delay: 476
+    content: '1'
+  - delay: 162
+    content: '5'
+  - delay: 1281
+    content: ','
+  - delay: 292
+    content: ' '
+  - delay: 302
+    content: '1'
+  - delay: 330
+    content: .
+  - delay: 354
+    content: '0'
+  - delay: 1073
+    content: ','
+  - delay: 245
+    content: ' '
+  - delay: 360
+    content: '0'
+  - delay: 292
+    content: .
+  - delay: 226
+    content: '0'
+  - delay: 287
+    content: ','
+  - delay: 201
+    content: ' '
+  - delay: 277
+    content: '0'
+  - delay: 316
+    content: .
+  - delay: 271
+    content: '0'
+  - delay: 3575
+    content: ','
+  - delay: 202
+    content: ' '
+  - delay: 237
+    content: '0'
+  - delay: 284
+    content: .
+  - delay: 249
+    content: '0'
+  - delay: 1730
+    content: ']'
+  - delay: 1005
+    content: ','
+  - delay: 200
+    content: ' '
+  - delay: 111
+    content: d
+  - delay: 194
+    content: i
+  - delay: 298
+    content: m
+  - delay: 670
+    content: s
+  - delay: 358
+    content: ':'
+  - delay: 348
+    content: ' '
+  - delay: 1325
+    content: '9'
+  - delay: 1186
+    content: "\b\e[K"
+  - delay: 730
+    content: '{'
+  - delay: 902
+    content: "\b\e[K"
+  - delay: 246
+    content: '['
+  - delay: 1445
+    content: '0'
+  - delay: 295
+    content: .
+  - delay: 210
+    content: '1'
+  - delay: 368
+    content: ','
+  - delay: 223
+    content: ' '
+  - delay: 258
+    content: '0'
+  - delay: 243
+    content: .
+  - delay: 170
+    content: '1'
+  - delay: 283
+    content: ','
+  - delay: 160
+    content: ' '
+  - delay: 273
+    content: '0'
+  - delay: 463
+    content: .
+  - delay: 172
+    content: '3'
+  - delay: 1066
+    content: ']'
+  - delay: 2649
+    content: '}'
+  - delay: 818
+    content: ''''
+  - delay: 1582
+    content: "\r\n\e[?2004l\r"
+  - delay: 228
+    content: "waiting for service to become available...\r\n"
+  - delay: 251
+    content: "requester: making request: curobo_ros2.srv.UpdateObstacle_Request(names=['obs_1'], poses=[0.3499999940395355, 0.0, 0.15000000596046448, 1.0, 0.0, 0.0, 0.0], dims=[0.10000000149011612, 0.10000000149011612, 0.30000001192092896])\r\n\r\n"
+  - delay: 20
+    content: "response:\r\ncurobo_ros2.srv.UpdateObstacle_Response(success=True, status='Obstacle list updated successfully.')\r\n\r\n"
+  - delay: 135
+    content: "\e]0;szhuang@alchemy:~/autohiam_ws\e\\"
+  - delay: 6
+    content: "\e]7;file://alchemy/home/szhuang/autohiam_ws\e\\\e[?2004h\e]0;szhuang@alchemy: ~/autohiam_ws\a\e[01;32mszhuang@alchemy\e[00m:\e[01;34m~/autohiam_ws\e[00m$ "
+  - delay: 3078
+    content: "\e[?2004l\r\r\nlogout\r\n"

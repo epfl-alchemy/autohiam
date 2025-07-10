@@ -21,6 +21,7 @@ setup(
     entry_points={
         'console_scripts': [
             'pickup = robochemist.pickup:main',
+            'pickup_tilt = robochemist.pickup_tilt:main',
             'moveto = robochemist.moveto:main',
             'heater = robochemist.move_into_heater:main',
             'open_gripper = robochemist.gripper_open:main',
@@ -31,6 +32,7 @@ setup(
             'disable_pose = robochemist.disable_pose:main',
             'cartesian_control_moveit = robochemist.cartesian_control_moveit:main',
             'shaking = robochemist.shaking:main',
+            'check_ammonia = robochemist.check_ammonia:main'
         ],
     },
 )

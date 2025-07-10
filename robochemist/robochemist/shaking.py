@@ -29,13 +29,13 @@ class ShakingNode(Node):
             self.get_logger().info("Waiting for action server to become available...")
         self.get_logger().info("Action server available.")
 
-        time.sleep(2)
+        time.sleep(5)
 
         # Shaking parameters
         self.amplitude = 0.07  # 7 cm shaking amplitude (in radians)
-        self.frequency = 2.0   # 2 Hz shaking
-        self.duration = 5.0    # 5 seconds
-        self.sample_rate = 50  # 50 Hz for smooth motion
+        self.frequency = 2.5   # 2 Hz shaking
+        self.duration = 7.0    # 7 seconds
+        self.sample_rate = 40  # 50 Hz for smooth motion
         self.joint_name = "joint6"  # Only target joint
         self.executed = False
 
@@ -51,6 +51,7 @@ class ShakingNode(Node):
 
     def shake(self):
         start_time = time.time()
+        self.get_logger().info(f"Starting shake. Initial joint positions: {self.current_positions}")
         
         while time.time() - start_time < self.duration:
             t = time.time() - start_time
@@ -59,7 +60,18 @@ class ShakingNode(Node):
             # Prepare the joint positions
             target_positions = [self.current_positions[j] for j in self.controlled_joints]
             joint_index = self.controlled_joints.index(self.joint_name)
-            target_positions[joint_index] = angle
+
+            # This line cause shaking to center around 0 not current joint 6 position
+            # target_positions[joint_index] = angle
+            initial_joint6 = self.current_positions[self.joint_name]
+            target_positions[joint_index] = initial_joint6 + angle
+
+            self.get_logger().info(
+                f"Shaking joint {self.joint_name} around {initial_joint6:.3f} with offset {angle:.3f}, result: {initial_joint6 + angle:.3f}"
+            )
+
+            # joint_state_log = ", ".join([f"{name}: {pos:.3f}" for name, pos in zip(self.controlled_joints, target_positions)])
+            # self.get_logger().info(f"Sending trajectory point: {joint_state_log}")
             
             # Create the trajectory goal
             joint_trajectory_goal = FollowJointTrajectory.Goal()

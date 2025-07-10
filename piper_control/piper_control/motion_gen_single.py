@@ -142,7 +142,7 @@ class cuRoboGenNode(Node):
         # )
         goal_pose = cuPose(
             position = torch.tensor([[0.061297, -0.069672, 0.339075]], dtype=torch.float32, device='cuda:0'),
-  quaternion = torch.tensor([[0.807163, -0.001325, 0.590326, 0.000750]], dtype=torch.float32, device='cuda:0')
+            quaternion = torch.tensor([[0.807163, -0.001325, 0.590326, 0.000750]], dtype=torch.float32, device='cuda:0')
        )
 
 

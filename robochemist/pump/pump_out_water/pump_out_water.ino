@@ -11,9 +11,9 @@ void setup() {
 
 void loop() {
   pump.write(0); 
-  delay(RUN_TIME_MS);
-  pump.write(90);             // Stop the pump (90°)
-  while (true) {
-    // Do nothing, permanently stop the pump
-  }
+  // delay(RUN_TIME_MS);
+  // pump.write(90);             // Stop the pump (90°)
+  // while (true) {
+  //   // Do nothing, permanently stop the pump
+  // }
 }

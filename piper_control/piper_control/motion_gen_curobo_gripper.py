@@ -31,7 +31,7 @@ class cuRoboGenNode(Node):
         self.declare_parameter('interpolation_dt', 0.005)
         self.declare_parameter('collision_cache_mesh', 20)
         self.declare_parameter('collision_cache_cuboid', 20)
-        self.declare_parameter('pose_change_threshold', 0.01)
+        self.declare_parameter('pose_change_threshold', 0.03)
         
         self.create_subscription(
             Pose,
@@ -136,12 +136,13 @@ class cuRoboGenNode(Node):
         initial_quat = np.quaternion(msg.orientation.x, msg.orientation.y, msg.orientation.z, msg.orientation.w)
         rotate_x_180 = np.quaternion(0, 0, 1, 0)
         result_quat0 = rotate_x_180 * initial_quat
+
         result_quat = quaternion.as_float_array(result_quat0) #x,y,z,w
 
         quat_values = (msg.orientation.x, msg.orientation.y, msg.orientation.z, msg.orientation.w) 
         point = np.array([msg.position.x, msg.position.y, msg.position.z])
 
-        distance = 0.300
+        distance = 0.400
         new_coordinates = calculate_new_point(quat_values, point, distance)
         x_new = new_coordinates[0]
         y_new = new_coordinates[1]

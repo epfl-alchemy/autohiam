@@ -1,0 +1,7 @@
+string[] names
+float32[] poses  # Flat array: [x, y, z, qw, qx, qy, qz, ...]
+float32[] dims   # Flat array: [dx, dy, dz, ...]
+string mode  # "add", "delete", "replace"
+---
+bool success
+string status

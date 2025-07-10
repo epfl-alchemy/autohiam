@@ -3,7 +3,7 @@
 <package format="3">
   <name>curobo_ros2</name>
   <version>0.0.0</version>
-  <description>TODO: Package description</description>
+  <description>ROS2 package to expose core curobo parameters as services or topics</description>
   <maintainer email="shengyangzhuang@outlook.com">szhuang</maintainer>
   <license>Apache-2.0</license>
 

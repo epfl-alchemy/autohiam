@@ -32,6 +32,7 @@ find_package(rosidl_default_generators REQUIRED)
 rosidl_generate_interfaces(${PROJECT_NAME}
   "msg/MarkerPoseWithID.msg"
   "srv/GenerateTrajectory.srv"
+  "srv/UpdateObstacle.srv"
   DEPENDENCIES geometry_msgs trajectory_msgs
 )
 

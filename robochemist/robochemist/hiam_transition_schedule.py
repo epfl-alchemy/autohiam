@@ -57,7 +57,7 @@ cmd_move_to_ammonia = (
 cmd_move_to_water = (
     "source ~/directory_env/curobo_env/bin/activate && "
     "cd ~/autohiam_ws && source install/setup.bash && "
-    "ros2 run robochemist moveto --ros-args -p y:=0.103"
+    "ros2 run robochemist moveto --ros-args -p y:=0.104"
 )
 cmd_move_to_cover_base = (
     "source ~/directory_env/curobo_env/bin/activate && "
@@ -67,7 +67,7 @@ cmd_move_to_cover_base = (
 cmd_move_to_bigger_beaker = (
     "source ~/directory_env/curobo_env/bin/activate && "
     "cd ~/autohiam_ws && source install/setup.bash && "
-    "ros2 run robochemist moveto --ros-args -p y:=0.1250 -p x:=0.440 -p z:=0.276"
+    "ros2 run robochemist moveto --ros-args -p y:=0.1250 -p x:=0.440 -p z:=0.283"
 )
 
 # === Cumotion (control logic) ===
@@ -134,16 +134,16 @@ def cleanup():
 
     try:
         print("Opening the gripper...")
-        subprocess.run(cmd_open_gripper, shell=True, executable="/bin/bash", check=True)
+        subprocess.run(cmd_open_gripper, shell=True, executable="/bin/bash", check=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
 
         print("Moving up...")
-        subprocess.run(cmd_cartesian_move_up, shell=True, executable="/bin/bash", check=True)
+        subprocess.run(cmd_cartesian_move_up, shell=True, executable="/bin/bash", check=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
 
         print("Going to disable pose...")
-        subprocess.run(cmd_disable_pose, shell=True, executable="/bin/bash", check=True)
+        subprocess.run(cmd_disable_pose, shell=True, executable="/bin/bash", check=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
 
         print("Closing the gripper to zero...")
-        subprocess.run(cmd_zero_gripper, shell=True, executable="/bin/bash", check=True)
+        subprocess.run(cmd_zero_gripper, shell=True, executable="/bin/bash", check=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
 
         print("Shutting down the robot...")
         if send_enable_node is not None:
@@ -167,6 +167,7 @@ def cleanup():
     subprocess.run("sudo pkill -f realsense2_camera", shell=True)
     subprocess.run("sudo pkill -f moveit_node", shell=True)
     subprocess.run("sudo pkill -f ros2", shell=True)
+    subprocess.run("sudo pkill -f rviz", shell=True)
 
 # Register signal handler
 def signal_handler(sig, frame):
@@ -206,7 +207,7 @@ def initialization():
     print("The robot is now ready for AUTOHIAM.")
 
     print("Starting cumotion...")
-    cumotion_node = subprocess.Popen(cmd_run_cumotion, shell=True, executable="/bin/bash", preexec_fn=os.setsid)
+    cumotion_node = subprocess.Popen(cmd_run_cumotion, shell=True, executable="/bin/bash", preexec_fn=os.setsid, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
     all_procs.append(cumotion_node)
     wait_seconds(10, "waiting for cumotion")
 
@@ -214,28 +215,28 @@ def washing():
     print("=== Step 3: Washing ===")
 
     print("Moving to start position...")
-    subprocess.run(cmd_start_pose, shell=True, executable="/bin/bash", check=True)
+    subprocess.run(cmd_start_pose, shell=True, executable="/bin/bash", check=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
 
     print("Opening the gripper...")
-    subprocess.run(cmd_open_gripper, shell=True, executable="/bin/bash", check=True)
+    subprocess.run(cmd_open_gripper, shell=True, executable="/bin/bash", check=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
 
     print("Picking up the sample...")
-    subprocess.run(cmd_pickup_container, shell=True, executable="/bin/bash", check=True)
+    subprocess.run(cmd_pickup_container, shell=True, executable="/bin/bash", check=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
 
     print("Moving down...")
-    subprocess.run(cmd_cartesian_move_down, shell=True, executable="/bin/bash", check=True)
+    subprocess.run(cmd_cartesian_move_down, shell=True, executable="/bin/bash", check=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
 
     print("Closing the gripper...")
-    subprocess.run(cmd_close_gripper, shell=True, executable="/bin/bash", check=True)
+    subprocess.run(cmd_close_gripper, shell=True, executable="/bin/bash", check=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
 
     print("Moving up...")
-    subprocess.run(cmd_cartesian_move_up, shell=True, executable="/bin/bash", check=True)
+    subprocess.run(cmd_cartesian_move_up, shell=True, executable="/bin/bash", check=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
 
     print("Moving to the bigger beaker...")
-    subprocess.run(cmd_move_to_bigger_beaker, shell=True, executable="/bin/bash", check=True)
+    subprocess.run(cmd_move_to_bigger_beaker, shell=True, executable="/bin/bash", check=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
 
     print("Moving down...")
-    subprocess.run(cmd_cartesian_move_down_more, shell=True, executable="/bin/bash", check=True)
+    subprocess.run(cmd_cartesian_move_down_more, shell=True, executable="/bin/bash", check=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
 
 
 if __name__ == "__main__":

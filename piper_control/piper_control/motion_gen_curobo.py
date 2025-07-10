@@ -13,7 +13,13 @@ from curobo.types.math import Pose as cuPose
 from curobo.types.robot import JointState as cuJointState
 from curobo.util.logger import setup_curobo_logger
 from curobo.util_file import get_robot_configs_path, get_world_configs_path, join_path, load_yaml
-from curobo.wrap.reacher.motion_gen import MotionGen, MotionGenConfig, MotionGenPlanConfig
+from curobo.wrap.reacher.motion_gen import (
+    MotionGen,
+    MotionGenConfig,
+    MotionGenPlanConfig,
+    PoseCostMetric,
+)
+
 
 from piper_control.utils import quaternion_to_rotation_matrix, calculate_new_point
 
@@ -198,10 +204,19 @@ class cuRoboGenNode(Node):
         
 
         goal_pose = self.target_pose
+
+        pose_cost_metric = PoseCostMetric(
+                    hold_partial_pose=True,
+                    hold_vec_weight=self.motion_gen.tensor_args.to_device([1, 1, 1, 1, 1, 0]),
+                )
+
+        plan_config = MotionGenPlanConfig(max_attempts=50, enable_graph_attempt=5, time_dilation_factor=time_dilation_factor)
+        plan_config.pose_cost_metric = pose_cost_metric
+
         motion_gen_result = self.motion_gen.plan_single(
             start_state, 
             goal_pose,
-            MotionGenPlanConfig(max_attempts=50, enable_graph_attempt=5, time_dilation_factor=time_dilation_factor),
+            plan_config,
         )
         
         if motion_gen_result.success.item():

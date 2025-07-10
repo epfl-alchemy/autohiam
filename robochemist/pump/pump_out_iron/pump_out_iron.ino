@@ -1,3 +1,35 @@
+// #include <Servo.h>
+
+// Servo pump;
+
+// #define PUMPPIN 10
+// #define RUN_TIME_MS 120000
+// #define LOG_INTERVAL_MS 1000
+
+// void setup() {
+//   delay(2000);
+//   Serial.begin(9600);
+//   while (!Serial);
+  
+//   pump.attach(PUMPPIN);
+//   pump.write(0);
+//   Serial.println("🚰 Pump started.");
+
+//   unsigned long startTime = millis();
+//   while (millis() - startTime < RUN_TIME_MS) {
+//     int secondsLeft = (RUN_TIME_MS - (millis() - startTime)) / 1000;
+//     Serial.print("⏳ Seconds left: ");
+//     Serial.println(secondsLeft);
+//     delay(LOG_INTERVAL_MS);
+//   }
+
+//   pump.write(90);
+//   Serial.println("✅ Pump stopped.");
+// }
+
+// void loop() {
+//   while (true) {}
+// }
 #include <Servo.h>
 
 Servo pump;
