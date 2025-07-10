@@ -6,7 +6,7 @@
           name="description">
     <meta content="Robotics,  additive manufacturing, self-driving lab, automated chemistry" name="keywords">
     <meta content="width=device-width, initial-scale=1" name="viewport">
-    <title>AUTOHIAM: Automated Robotic System for Hydrogel Infusion Additive Manufacturing Gen2&2.5</title>
+    <title>AUTOHIAM: Automated Robotic System for Hydrogel Infusion Additive Manufacturing Gen2&3</title>
 
     <!-- Global site tag (gtag.js) - Google Analytics -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-PYVRSFMDRL"></script>
@@ -32,7 +32,7 @@
     <link href="https://cdn.jsdelivr.net/gh/jpswalsh/academicons@1/css/academicons.min.css"
           rel="stylesheet">
     <link href="./static/css/index.css" rel="stylesheet">
-    <link href="./static/images/favicon.svg" rel="icon">
+    <link href="./static/images/icon3.png" rel="icon">
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script defer src="./static/js/fontawesome.all.min.js"></script>
@@ -42,38 +42,39 @@
 </head>
 <body>
 
-<nav class="navbar" role="navigation" aria-label="main navigation">
-  <div class="navbar-brand">
-    <a role="button" class="navbar-burger" aria-label="menu" aria-expanded="false">
-      <span aria-hidden="true"></span>
-      <span aria-hidden="true"></span>
-      <span aria-hidden="true"></span>
-    </a>
-  </div>
-  <div class="navbar-menu">
-    <div class="navbar-start" style="flex-grow: 1; ">
-      <a class="navbar-item" href="https://www.epfl.ch/labs/alchemy/">
+<nav aria-label="main navigation" class="navbar" role="navigation">
+    <div class="navbar-brand">
+        <a aria-expanded="false" aria-label="menu" class="navbar-burger" role="button">
+            <span aria-hidden="true"></span>
+            <span aria-hidden="true"></span>
+            <span aria-hidden="true"></span>
+        </a>
+    </div>
+    <div class="navbar-menu">
+        <div class="navbar-start" style="flex-grow: 1; ">
+            <a class="navbar-item" href="https://www.epfl.ch/labs/alchemy/">
       <span class="icon">
           <i class="fas fa-home"></i>
       </span>
-      </a>
+            </a>
 
-      <div class="navbar-item has-dropdown is-hoverable">
-        <a class="navbar-link">
-          More Research
-        </a>
-        <div class="navbar-dropdown">
-          <a class="navbar-item" href="https://www.nature.com/articles/s41586-022-05433-2">
-            HIAM Gen1
-          </a>
-          <a class="navbar-item" href="https://infoscience.epfl.ch/entities/publication/1cfd2bda-a70f-4cfc-8043-394dfae704e5/preprintdetails">
-            HIAM Gen2
-          </a>
+            <div class="navbar-item has-dropdown is-hoverable">
+                <a class="navbar-link">
+                    More Research
+                </a>
+                <div class="navbar-dropdown">
+                    <a class="navbar-item" href="https://www.nature.com/articles/s41586-022-05433-2">
+                        HIAM Gen1
+                    </a>
+                    <a class="navbar-item"
+                       href="https://infoscience.epfl.ch/entities/publication/1cfd2bda-a70f-4cfc-8043-394dfae704e5/preprintdetails">
+                        HIAM Gen2
+                    </a>
+                </div>
+            </div>
         </div>
-      </div>
-    </div>
 
-  </div>
+    </div>
 </nav>
 
 
@@ -83,16 +84,16 @@
             <div class="columns is-centered">
                 <div class="column has-text-centered">
                     <h1 class="title is-1 publication-title">AUTOHIAM: Automated Robotic System for Hydrogel Infusion
-                        Additive Manufacturing Gen2&2.5</h1>
+                        Additive Manufacturing Gen2&3</h1>
                     <div class="is-size-5 publication-authors">
                         <span class="author-block">
-                          <a href="https://shengyangzhuang.github.io/">Shengyang Zhuang</a><!--<sup>1</sup>-->,</span>
-                        <span class="author-block">
-                          <a href="https://people.epfl.ch/ying.hong?lang=en">Ying Hong</a>,
-                        </span>
-                        <span class="author-block">
-                          <a href="https://people.epfl.ch/yiming.ji/?lang=en">Yiming Ji</a>, and
-                        </span>
+                          <a href="https://shengyangzhuang.github.io/">Shengyang Zhuang</a>, and</span>
+                        <!--                        <span class="author-block">-->
+                        <!--                          <a href="https://people.epfl.ch/ying.hong?lang=en">Ying Hong</a>,-->
+                        <!--                        </span>-->
+                        <!--                        <span class="author-block">-->
+                        <!--                          <a href="https://people.epfl.ch/yiming.ji/?lang=en">Yiming Ji</a>, and-->
+                        <!--                        </span>-->
                         <span class="author-block">
                           <a href="https://people.epfl.ch/daryl.yee?lang=en">Daryl Yee</a>
                         </span>
@@ -103,8 +104,16 @@
                             Institute of Electrical and Micro Engineering,<br>
                             École Polytechnique Fédérale de Lausanne (EPFL)</span>
                     </div>
-
-                    <div class="column has-text-centered">
+                    <br>
+                    <div class="columns is-centered has-text-centered">
+                        <div class="column is-four-fifths">
+                            <figure class="image is-inline-block" style="margin-bottom: 0;">
+                                <img alt="EPFL ALCHEMY logo combo" src="static/images/logo_combo.png"
+                                     style="width: 280px; height: auto;">
+                            </figure>
+                        </div>
+                    </div>
+                    <div class="column has-text-centered" style="margin-top: -20px;">
                         <div class="publication-links">
                             <!-- Video Link. -->
                             <span class="link-block">
@@ -128,7 +137,18 @@
                                                 </span>
                         </div>
                     </div>
-
+                    <br>
+                    <div class="columns is-centered has-text-centered">
+                        <div class="column is-four-fifths">
+                            <figure class="image is-inline-block">
+                                <img alt="Descriptive alt text" src="static/images/hiam_gen2_setup2.jpg">
+                            </figure>
+                            <p>
+                                AUTOHIAM is an affordable and flexible vision-based robotic system that automates
+                                Hydrogel Infusion Additive Manufacturing Gen2&3.
+                            </p>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -153,18 +173,34 @@
         <br><br>
         <!-- Paper video. -->
         <div class="columns is-centered has-text-centered">
-            <div class="column is-four-fifths">
-                <h2 class="title is-3">Video</h2>
-                <div class="publication-video">
-                    <video autoplay controls loop muted width="100%">
-                        <source src="static/videos/infusion_v1.mp4" type="video/mp4">
-                        Your browser does not support the video tag.
-                    </video>
+            <div class="column is-centered">
+                <!--            <div class="column is-four-fifths">-->
+                <h2 class="title is-3">Full Video for HIAM Gen2</h2>
+                <!--                <div class="publication-video">-->
+                <!--                    <video autoplay controls loop muted width="100%">-->
+                <!--                        <source src="static/videos/gen2_front_view.mp4" type="video/mp4">-->
+                <!--                        Your browser does not support the video tag.-->
+                <!--                    </video>-->
+                <div class="columns is-centered">
+                    <!-- First video -->
+                    <div class="column">
+                        <video autoplay height="100%" id="o1" loop muted playsinline>
+                            <source src="./static/videos/gen2_front_view.mp4" type="video/mp4">
+                        </video>
+                    </div>
+
+                    <!-- Second video -->
+                    <div class="column">
+                        <video autoplay height="100%" id="o2" loop muted playsinline>
+                            <source src="./static/videos/gen2_side_view.mp4" type="video/mp4">
+                        </video>
+                    </div>
                 </div>
             </div>
         </div>
+    </div>
 
-        <!--/ Paper video. -->
+    <!--/ Paper video. -->
     </div>
 </section>
 
@@ -195,44 +231,46 @@
                 </div>
                 <br>
                 <div class="content">
-                    <h3 class="title is-4">Motion Planning</h3>
+                    <h3 class="title is-4">Automated Collision-Free Motion Planning for Chemistry Labs</h3>
                     <p>
-                        AUTOHIAM leverages cuRobo for parallelized collision-free minimum-jerk robot motion generation.
+                        AUTOHIAM makes robotic automation easy for chemists—no programming required.
+                        It uses powerful motion planning behind the scenes to move lab samples safely and smoothly. You
+                        can represent lab equipment as simple shapes—like boxes, cylinders, or spheres—and just enter
+                        where you want the robot to go. AUTOHIAM will take care of the rest, automatically generating
+                        collision-free motions to transfer your samples with precision to heat plate, beakers, and cool
+                        plate.
                     </p>
                     <div class="columns is-vcentered interpolation-panel">
                         <!-- First video -->
                         <div class="column">
                             <video autoplay height="100%" id="o1" loop muted playsinline>
-                                <source src="./static/videos/.mp4" type="video/mp4">
+                                <source src="./static/videos/no_ob.mp4" type="video/mp4">
                             </video>
                         </div>
                         <!-- Second video -->
                         <div class="column">
                             <video autoplay height="100%" id="o2" loop muted playsinline>
-                                <source src="./static/videos/.mp4" type="video/mp4">
+                                <source src="./static/videos/obstacle_avoidance.mp4" type="video/mp4">
                             </video>
                         </div>
                     </div>
-                    <h3 class="title is-4">Vision-based sample handling</h3>
+                    <h3 class="title is-4">Vision-based Sample Handling</h3>
                     <p>
                         AUTOHIAM leverages perception-driven control for sample transfering among different chemical
-                        solutions.
+                        solutions. Even under disturbances, AUTOHIAM can accurately detect the position of the sample
+                        container and handle it for transfering accordingly.
                     </p>
                     <div class="columns is-vcentered interpolation-panel">
                         <!-- First video -->
                         <div class="column">
-                            <p>
-                                Even under disturbances, AUTOHIAM can accurately detect the position of the sample
-                                container and handle it for transfering accordingly.
-                            </p>
                             <video autoplay height="100%" id="curobo" loop muted playsinline>
-                                <source src="./static/videos/.mp4" type="video/mp4">
+                                <source src="./static/videos/dynamic_tracking.mp4" type="video/mp4">
                             </video>
                         </div>
                         <!-- Second video -->
                         <div class="column">
                             <video autoplay height="100%" id="rrt" loop muted playsinline>
-                                <source src="./static/videos/.mp4" type="video/mp4">
+                                <source src="./static/videos/vision_based_handling.mp4" type="video/mp4">
                             </video>
                         </div>
                     </div>
@@ -268,39 +306,38 @@
     <div class="container is-max-desktop content">
         <h2 class="title">BibTeX</h2>
         <pre><code>@mastersthesis{zhuang2025autohiam,
-  author    = {Zhuang, Shengyang}, {Hong, Ying}, {Ji, Yiming}, {Yee, Daryl}
-  title     = {Multi-Robot System Prototyping for Cooperative Control in Robot-Assisted Spine Surgery},
+  author    = {Zhuang, Shengyang}, {Yee, Daryl}
+  title     = {AUTOHIAM: Automated Robotic System for Hydrogel Infusion Additive Manufacturing Gen2&2.5},
   school    = {EPFL},
   year      = {2025},
 }</code></pre>
     </div>
 </section>
 
-
-<!--<footer class="footer">-->
-<!--    <div class="container">-->
-<!--        <div class="content has-text-centered">-->
-<!--            <div class="column is-16">-->
-<!--                <div class="content">-->
-<!--&lt;!&ndash;                    <p>&ndash;&gt;-->
-<!--&lt;!&ndash;                        &copy; Copyright <strong><span><a&ndash;&gt;-->
-<!--&lt;!&ndash;                            href="https://shengyangzhuang.github.io/"> Shengyang Zhuang</a></span></strong> <br>&ndash;&gt;-->
-<!--&lt;!&ndash;                        (First published: September 8, 2024; last updated: September 9, 2024)&ndash;&gt;-->
-<!--&lt;!&ndash;                    </p>&ndash;&gt;-->
-<!--                    <p>-->
-<!--                        Website under construction.-->
-<!--                    </p>-->
-<!--                </div>-->
-<!--            </div>-->
-<!--        </div>-->
-<!--    </div>-->
 <!--</footer>-->
-<footer class="footer has-text-centered" style="padding: 0.75rem 1rem;">
-  <p style="margin: 0; line-height: 1.2;">
-      © 2025 <a href="https://shengyangzhuang.github.io/">Shengyang Zhuang</a> — AUTOHIAM Project. <br><br>
-      Website under construction.
-  </p>
+<footer class="footer"
+        style="padding: 0.75rem 1rem; display: flex; align-items: center; justify-content: center; flex-wrap: wrap;">
+    <!-- Left column: logos -->
+    <div style="flex: 1; display: flex; align-items: center; gap: 1rem;">
+        <img alt="ALCHEMY Logo" src="static/images/epfl.png" style="height: 2.5rem;">
+        <img alt="EPFL Logo" src="static/images/alchemy.png" style="height: 1.45rem;">
+    </div>
+
+    <!-- Center column: text -->
+    <div style="flex: 1; text-align: center;">
+        <p style="margin: 0; line-height: 1.4; font-size: 0.9rem;">
+            © 2025 <a href="https://shengyangzhuang.github.io/">Shengyang Zhuang</a> — AUTOHIAM Project. <br>
+            Website under construction.
+        </p>
+    </div>
+
+    <!-- Right column: invisible spacer -->
+    <div style="flex: 1; text-align: right; font-size: 0.9rem;">
+        Contact: <a href="mailto:daryl.yee@epfl.ch">daryl.yee@epfl.ch</a> <br>
+        <!--        <a href="mailto:shengyang.zhuang@epfl.ch">shengyang.zhuang@epfl.ch</a>-->
+    </div>
 </footer>
+
 
 </body>
 </html>
