@@ -209,22 +209,35 @@
         <div class="columns is-centered">
             <div class="column">
                 <div class="content">
-                    <h3 class="title is-4">Robotic Hand-Eye Calibration</h3>
+                    <h3 class="title is-4">Standarized Hardware Components for Chemistry Lab</h3>
                     <p>
-                        AUTOHIAM leverages handeye_calibration_ros2 package to calibrate the RealSense D435 camera on
-                        the PiPER arm.
+                        AUTOHIAM provides modular beaker support systems for reliable setup and vision-based control.
+                        Custom-designed beaker holders can be securely mounted onto standard Thorlabs aluminum
+                        breadboards, ensuring stable positioning during experiments. Some holders include built-in slots
+                        for ArUco markers, enabling precise vision-based pose estimation of beakers. AUTOHIAM also
+                        includes a modular beaker head with tube support, designed to work seamlessly with peristaltic
+                        pumps for automated liquid handling.
+                    </p>
+                    <h3 class="title is-4">Robot Scientist Skills</h3>
+                    <p>
+                        AUTOHIAM includes a built-in shaking function for efficient sample drying. It can oscillate the
+                        robot’s end-effector at different frequencies and amplitudes. When the sample container is
+                        placed into a beaker filled with tissue or cotton, this gentle shaking helps dry the sample
+                        effectively—no additional setup needed. AUTOHIAM also supports both vision-based dynamic sample
+                        transfer using ArUco markers, and simple position-based transfer, giving users flexible and
+                        reliable automation options without any need for programming.
                     </p>
                     <div class="columns is-vcentered interpolation-panel">
                         <!-- First video -->
                         <div class="column">
-                            <video autoplay height="100%" id="real_positions" loop muted playsinline>
-                                <source src="./static/videos/.mp4" type="video/mp4">
+                            <video autoplay height="100%" id="line" loop muted playsinline>
+                                <source src="./static/videos/shaking.mp4" type="video/mp4">
                             </video>
                         </div>
                         <!-- Second video -->
                         <div class="column">
-                            <video autoplay height="100%" id="handeye_calculation" loop muted playsinline>
-                                <source src="./static/videos/.mp4" type="video/mp4">
+                            <video autoplay height="100%" id="i" loop muted playsinline>
+                                <source src="./static/videos/vision_transfering.mp4" type="video/mp4">
                             </video>
                         </div>
                     </div>
@@ -276,10 +289,7 @@
                     </div>
                     <h3 class="title is-4">Low-cost peristaltic pump system for automatic liquid handling</h3>
                     <p>
-                        LBR iiwa 14 held a marker with pre-defined motion (straight line and Imperial 'I'), while iiwa 7
-                        tracked the motion. Result
-                        demonstrated the robot's ability to follow both simple and complex patterns, with short and
-                        smooth paths.
+                        TBD
                     </p>
                     <div class="columns is-vcentered interpolation-panel">
                         <!-- First video -->
@@ -307,7 +317,7 @@
         <h2 class="title">BibTeX</h2>
         <pre><code>@mastersthesis{zhuang2025autohiam,
   author    = {Zhuang, Shengyang}, {Yee, Daryl}
-  title     = {AUTOHIAM: Automated Robotic System for Hydrogel Infusion Additive Manufacturing Gen2&2.5},
+  title     = {AUTOHIAM: Automated Robotic System for Hydrogel Infusion Additive Manufacturing Gen2&3},
   school    = {EPFL},
   year      = {2025},
 }</code></pre>
