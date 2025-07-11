@@ -1,0 +1,13 @@
+export WINDOWID=$(xdotool getactivewindow)
+
+ttyrec -e ./replay.py custom_name.ttyrec
+
+ttygif custom_name.ttyrec -o custom_animation.gif
+
+ffmpeg -i tty.gif -vf "scale=3840:-1,fps=60" update_obstacle.mp4
+
+ffmpeg -i tty.gif \
+       -vf "scale=1920:1080:flags=lanczos,fps=30" \
+       -c:v libx264 -preset slow -crf 18 \
+       -pix_fmt yuv420p \
+       update_obstacle.mp4

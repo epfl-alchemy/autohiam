@@ -7,6 +7,7 @@ from rclpy.executors import MultiThreadedExecutor
 
 import numpy as np
 import quaternion
+import math
 
 from piper_control.utils import quaternion_to_rotation_matrix, calculate_new_point
 
@@ -95,9 +96,9 @@ class PickUpSample(Node):
         ):
         # Process orientation (rotate 180° around X)
         initial_quat = np.quaternion(msg.orientation.x, msg.orientation.y, msg.orientation.z, msg.orientation.w)
-        rotate_x_180 = np.quaternion(0, 0, 1, 0)
+        rotate_x_180 = np.quaternion(0, 0, 1, 0) #w,x,y,z
         result_quat0 = rotate_x_180 * initial_quat
-        result_quat = quaternion.as_float_array(result_quat0)  #x,y,z,w
+        result_quat = quaternion.as_float_array(result_quat0) #x,y,z,w
 
         # Compute new position with direction offset
         quat_values = (msg.orientation.x, msg.orientation.y, msg.orientation.z, msg.orientation.w)

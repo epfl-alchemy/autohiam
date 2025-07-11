@@ -1,0 +1,2 @@
+ros2 service call /update_obstacles curobo_ros2/srv/UpdateObstacle '{names: ["obs_1"], poses: [0.35, 0.0, 0.15, 1.0, 0.0, 0.0, 0.0], dims: [0.1, 0.1, 0.3]}'
+

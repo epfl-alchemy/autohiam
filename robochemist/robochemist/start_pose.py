@@ -21,7 +21,7 @@ class StartStateNode(Node):
             self.get_logger().info("Waiting for action server to become available...")
         self.get_logger().info("Action server available.")
 
-        time.sleep(2)
+        time.sleep(5)
 
     def execute(self, positions: list, sec_from_start: int = 7):
         if len(positions) != 6:

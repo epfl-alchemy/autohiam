@@ -1,4 +1,6 @@
 import subprocess
+import serial
+import time
 
 def upload_sketch(sketch_path, board_fqbn, port):
     try:
@@ -22,9 +24,20 @@ upload_sketch(
     board_fqbn="arduino:avr:uno",
     port="/dev/ttyACM0"
 )
+time.sleep(90)
+print("Old water has been pumped out.")
 
-# upload_sketch(
-#     sketch_path="/home/szhuang/autohiam_ws/src/robochemist/pump/pump_out",
-#     board_fqbn="arduino:avr:uno",
-#     port="/dev/ttyACM0"
-# )
+upload_sketch(
+    sketch_path="/home/szhuang/autohiam_ws/src/robochemist/pump/pump_in_water",
+    board_fqbn="arduino:avr:uno",
+    port="/dev/ttyACM0"
+)
+time.sleep(90)
+print("New water has been pumped in.")
+
+upload_sketch(
+    sketch_path="/home/szhuang/autohiam_ws/src/robochemist/pump/minimal_sketch",
+    board_fqbn="arduino:avr:uno",
+    port="/dev/ttyACM0"
+)
+print("Minimal sketch is uploaded.")

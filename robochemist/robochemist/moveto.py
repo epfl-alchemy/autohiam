@@ -8,9 +8,9 @@ class TrajectoryClient(Node):
     def __init__(self):
         super().__init__('trajectory_client')
         
-        self.declare_parameter('x', 0.325)
-        self.declare_parameter('y', 0.175)
-        self.declare_parameter('z', 0.266)
+        self.declare_parameter('x', 0.324)
+        self.declare_parameter('y', 0.178)
+        self.declare_parameter('z', 0.275)
 
         self.x = self.get_parameter('x').get_parameter_value().double_value
         self.y = self.get_parameter('y').get_parameter_value().double_value
@@ -32,10 +32,10 @@ class TrajectoryClient(Node):
         request.goal_pose.position.x = self.x
         request.goal_pose.position.y = self.y
         request.goal_pose.position.z = self.z
-        request.goal_pose.orientation.w = 0.7071
-        request.goal_pose.orientation.x = 0.0
-        request.goal_pose.orientation.y = 0.7071
-        request.goal_pose.orientation.z = 0.0
+        request.goal_pose.orientation.w = 0.64851 #0.7071
+        request.goal_pose.orientation.x = 0.00244 #0.0
+        request.goal_pose.orientation.y = 0.76118 #0.7071
+        request.goal_pose.orientation.z = 0.00570 #0.0
         
         # Set to use pose-based planning rather than joint-based
         request.use_joint_state = False
