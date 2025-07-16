@@ -141,7 +141,7 @@
                     <div class="columns is-centered has-text-centered">
                         <div class="column is-four-fifths">
                             <figure class="image is-inline-block">
-                                <img alt="Descriptive alt text" src="static/images/hiam_gen2_setup2.jpg">
+                                <img alt="Descriptive alt text" src="static/images/cover_autohiam.jpg">
                             </figure>
                             <p>
                                 AUTOHIAM is an affordable and flexible vision-based robotic system that automates
@@ -164,7 +164,31 @@
                 <h2 class="title is-3">Abstract</h2>
                 <div class="content has-text-justified">
                     <p>
-                        TBD
+                        Hydrogel Infusion Additive Manufacturing (HIAM) enables the fabrication of architected ceramics
+                        and metals by infusing printed hydrogels with metal salts, followed by thermal conversion. HIAM
+                        Gen2 reduces shrinkage through repeated infusion–precipitation cycles, but its labor-intensive
+                        workflow requires chemists to repeatedly enter safety-restricted nanomaterial labs, making the
+                        process time-consuming, tedious, and potentially hazardous.<br>
+                        We present <strong>AUTOHIAM</strong>, an open-source, chemist-friendly robotic platform that
+                        automates the HIAM workflow and can be easily adapted to other HIAM-like chemical processes
+                        without extensive programming. AUTOHIAM enables chemists to carry out HIAM experiments with any
+                        number of samples and cycles—day or night—without manual intervention or programming skills. It
+                        uses large language models to interact with users and determine the appropriate experimental
+                        protocol (e.g., Gen2 vs. Gen3), the number of cycles, and task sequencing. Equipped with
+                        vision-based pose estimation via ArUco markers and GPU-accelerated trajectory optimization
+                        (cuRobo), AUTOHIAM generates real-time, collision-free robot motions around lab equipment with
+                        simple geometric representations. This allows chemists to flexibly rearrange their workspace or
+                        add new obstacles without modifying code. <br>
+                        AUTOHIAM supports sample handling, pick-and-place with vision feedback, robot shaking for
+                        drying, and liquid transfer using a low-cost, Arduino-controlled peristaltic pump system.
+                        Infusion and precipitation conditions can be systematically varied to study their effects on
+                        shrinkage and material quality, with automated fluid delivery managed through 3D-printed tube
+                        supports and modular beaker mounts. The system is remotely operable and includes live camera
+                        monitoring for full experimental oversight. Tested on HIAM Gen2 workflows for metal-ceramic
+                        fabrication, AUTOHIAM achieved material performance comparable to human operation while
+                        dramatically improving safety, scalability, and throughput. Its mission is to empower
+                        chemists—regardless of robotics experience—to carry out complex, multi-step material synthesis
+                        autonomously and reproducibly.
                     </p>
                 </div>
             </div>
@@ -235,19 +259,13 @@
                         pumps for automated liquid handling.
                     </p>
                     <div class="columns is-vcentered interpolation-panel">
-                        <!-- First video -->
+                        <!--                        <div class="column is-half is-offset-one-quarter has-text-centered">-->
                         <div class="column">
-                            <video autoplay height="100%" id="line" loop muted playsinline>
-                                <source src="static/videos/.mp4" type="video/mp4">
-                            </video>
-                        </div>
-                        <!-- Second video -->
-                        <div class="column">
-                            <video autoplay height="100%" id="i" loop muted playsinline>
-                                <source src="static/videos/.mp4" type="video/mp4">
-                            </video>
+                            <img alt="Spanning Image" src="static/images/hardware_3d_printed.jpg"
+                                 style="width: 100%; height: auto;">
                         </div>
                     </div>
+
                     <h3 class="title is-4">Robot Scientist Skills</h3>
                     <p>
                         AUTOHIAM includes a built-in shaking function for efficient sample drying. It can oscillate the
@@ -319,7 +337,13 @@
                     </div>
                     <h3 class="title is-4">Low-cost Peristaltic Pump System for Automatic Liquid Handling</h3>
                     <p>
-                        TBD
+                        To enable affordable and precise liquid handling, AUTOHIAM integrates a Gravity Digital
+                        Peristaltic Pump system costing just 35 CHF per unit. We designed and 3D-printed a custom pump
+                        support structure to neatly organize and stack multiple pumps. Each pump is connected to an
+                        Arduino board and controlled via Python for accurate timing—delivering approximately 1 mL of
+                        liquid every 2 seconds through 2.5 mm ID / 5 mm OD silicone tubing. The setup enables fluid
+                        transfer between beakers (secured with tube support structures), waste containers, and reagent
+                        bottles, supporting fully automated workflows at minimal cost.
                     </p>
                     <div class="columns is-vcentered interpolation-panel">
                         <!-- First video -->
