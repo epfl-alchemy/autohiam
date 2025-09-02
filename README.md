@@ -4,7 +4,8 @@ AUTOHIAM is an affordable and flexible vision-based robotic system that automate
 Manufacturing.
 
 [**Paper**](https://epfl-alchemy.github.io/autohiam/) | [**Project**](https://epfl-alchemy.github.io/autohiam/) | 
-[**Video**](https://epfl-alchemy.github.io/autohiam/)
+[**Video**](https://epfl-alchemy.github.io/autohiam/) | 
+[**Documentation**](https://autohiam-tutorial.readthedocs.io/en/latest/)
 
 ## Introduction
 
