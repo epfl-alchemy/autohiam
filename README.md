@@ -20,11 +20,12 @@ scalability, and throughput.
 
 ## Citation
 ```
-@mastersthesis{zhuang2025autohiam,
-  author    = {Zhuang, Shengyang}, {Yee, Daryl}
-  title     = {AUTOHIAM: Automated Robotic System for Hydrogel Infusion Additive Manufacturing Gen2&3},
-  school    = {EPFL},
-  year      = {2025},
+@misc{zhuang2025autohiam,
+  author       = {Zhuang, Shengyang and Yee, Daryl},
+  title        = {AUTOHIAM: Automated Robotic System for Hydrogel Infusion Additive Manufacturing (Gen2 \& Gen3)},
+  year         = {2025},
+  howpublished = {\url{https://epfl-alchemy.github.io/autohiam/}},
+  note         = {Research project developed at ALCHEMY, École Polytechnique Fédérale de Lausanne (EPFL)},
 }
 ```
 
